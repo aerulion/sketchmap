@@ -1,0 +1,8 @@
+name: SketchMap
+version: 1.0
+main: net.aerulion.sketchmap.SketchMapPlugin
+api-version: 1.13
+commands:
+  sketchmap:
+    description: SketchMap Core Command
+    usage: /sketchmap help
