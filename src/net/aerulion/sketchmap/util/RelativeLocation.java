@@ -1,4 +1,4 @@
-package net.aerulion.sketchmap.map;
+package net.aerulion.sketchmap.util;
 
 public class RelativeLocation {
 	private int x;

@@ -1,4 +1,4 @@
-package net.aerulion.sketchmap.map;
+package net.aerulion.sketchmap.util;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
