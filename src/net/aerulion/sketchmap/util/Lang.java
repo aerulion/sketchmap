@@ -8,5 +8,6 @@ public class Lang {
 	public static final String CONSOLE_PLUGIN_ENABLED = CHAT_PREFIX + "§eDas Plugin wurde aktiviert.";
 	public static final String CONSOLE_DISABLING = CHAT_PREFIX + "§eDeaktiviere Plugin...";
 	public static final String CONSOLE_PLUGIN_DISABLED = CHAT_PREFIX + "§eDas Plugin wurde deaktiviert.";
+	public static final String CONSOLE_LOADING_SKETCHMAPS = CHAT_PREFIX + "§eSketchMaps werden geladen...";
 	public static final String CONSOLE_SKETCHMAPS_LOADED = "§e SketchMaps wurden geladen. Dauerte §a";
 }

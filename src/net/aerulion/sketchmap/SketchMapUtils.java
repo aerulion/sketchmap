@@ -15,8 +15,6 @@ import org.bukkit.map.MapView;
 
 public class SketchMapUtils {
 
-	
-
 	public static BufferedImage resize(Image img, final Integer width, final Integer height) {
 		img = img.getScaledInstance(width, height, 4);
 		if (img instanceof BufferedImage) {
@@ -45,7 +43,6 @@ public class SketchMapUtils {
 	public static World getDefaultWorld() {
 		return Bukkit.getWorlds().get(0);
 	}
-
 
 	public static ArrayList<String> filterForTabcomplete(ArrayList<String> Input, String Filter) {
 		if (Filter != null) {

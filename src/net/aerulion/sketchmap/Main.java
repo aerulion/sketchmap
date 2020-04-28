@@ -23,6 +23,7 @@ public class Main extends JavaPlugin {
 		getCommand("sketchmap").setExecutor(new CMD_SKETCHMAP());
 		getCommand("sketchmap").setTabCompleter(new CMD_SKETCHMAP());
 
+		TextUtils.sendColoredConsoleMessage(Lang.CONSOLE_LOADING_SKETCHMAPS);
 		try {
 			FileManager.loadAllSketchMaps();
 		} catch (IOException e) {

@@ -24,15 +24,6 @@ public class Base64Utils {
 		return copy;
 	}
 
-	// public static BufferedImage base64StringToImg(final String imageString) {
-	// try {
-	// return ImageIO.read(new
-	// ByteArrayInputStream(Base64.getDecoder().decode(imageString)));
-	// } catch (final IOException e) {
-	// throw new UncheckedIOException(e);
-	// }
-	// }
-
 	public static BufferedImage base64StringToImgOLD(final String imageString) {
 		BufferedImage image = null;
 		try {

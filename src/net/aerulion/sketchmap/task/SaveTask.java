@@ -34,8 +34,8 @@ public class SaveTask extends BukkitRunnable {
 		cfg.set("YPANES", sketchmap.getYPanes());
 		cfg.set("BASEFORMAT", sketchmap.getBaseFormat().name());
 		final List<String> mapping = new ArrayList<String>();
-		for (final RelativeLocation loc : sketchmap.getMapCollection().keySet()) {
-			mapping.add(String.valueOf(String.valueOf(loc.toString())) + " " + sketchmap.getMapCollection().get(loc).getId());
+		for (final RelativeLocation loc : sketchmap.getMapViews().keySet()) {
+			mapping.add(String.valueOf(String.valueOf(loc.toString())) + " " + sketchmap.getMapViews().get(loc).getId());
 		}
 		cfg.set("MAPPING", mapping);
 		try {

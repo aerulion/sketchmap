@@ -24,50 +24,52 @@ import org.bukkit.inventory.ItemStack;
 import net.aerulion.sketchmap.Main;
 import net.aerulion.sketchmap.SketchMapUtils;
 import net.aerulion.sketchmap.util.BaseFormat;
+import net.aerulion.sketchmap.util.CommandSound;
 import net.aerulion.sketchmap.util.FileManager;
 import net.aerulion.sketchmap.util.ItemUtils;
 import net.aerulion.sketchmap.util.Lang;
 import net.aerulion.sketchmap.util.SketchMap;
+import net.aerulion.sketchmap.util.SoundUtils;
 
 public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Lang.CHAT_PREFIX + "§c Dieser Befehl kann nur als Spieler ausgeführt werden.");
-			return true;
-		}
-		Player player = (Player) sender;
-
-		if (!player.hasPermission("sketchmap.use")) {
+		if (!sender.hasPermission("sketchmap.use")) {
 			sender.sendMessage(Lang.CHAT_PREFIX + "§c Du hast nicht die Rechte, diesen Befehl zu nutzen.");
+			SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 			return true;
 		}
 
 		if (args.length < 1) {
 			sender.sendMessage(Lang.CHAT_PREFIX + "§c Zu wenige Argumente, für mehr Infos nutze /sketchmap help.");
+			SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 			return true;
 		}
 
 		if (args[0].equalsIgnoreCase("create")) {
 			if (args.length < 3) {
-				player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Falsche Argumente.");
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Falsche Argumente.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
 
-			if (args[1].length() < 3 || args[1].length() > 16) {
-				player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Map ID darf zwischen 3-16 Zeichen lang sein.");
+			if (args[1].length() < 3 || args[1].length() > 32) {
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Map ID darf zwischen 3-32 Zeichen lang sein.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
 
 			if (!StringUtils.isAlphanumeric(args[1].replace("_", "").replace("-", ""))) {
-				player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Map ID muss alphanumerisch sein.");
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Map ID muss alphanumerisch sein.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
 
 			if (Main.LoadedSketchMaps.containsKey(args[1])) {
-				player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Diese SketchMap ID existiert bereits.");
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Diese SketchMap ID existiert bereits.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
 
@@ -75,7 +77,8 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 			try {
 				url = new URL(args[2]);
 			} catch (MalformedURLException ex) {
-				player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bild konnte nicht geladen werden. URL erscheint ungültig.");
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bild konnte nicht geladen werden. URL erscheint ungültig.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
 
@@ -85,30 +88,41 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 			if (args.length > 3) {
 				final String[] split = args[3].split(":");
 				if (split.length != 2) {
-					player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bild konnte nicht skaliert werden. Ungültige Argumente angegeben.");
+					sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bild konnte nicht skaliert werden. Ungültige Argumente angegeben.");
+					SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 					return true;
 				}
 				try {
 					xPanes = Integer.parseInt(split[0]);
 					yPanes = Integer.parseInt(split[1]);
 				} catch (Exception ex2) {
-					player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bild konnte nicht skaliert werden. Ungültige Argumente angegeben.");
+					sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bild konnte nicht skaliert werden. Ungültige Argumente angegeben.");
+					SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 					return true;
 				}
 				if (xPanes < 1 || yPanes < 1) {
-					player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bild konnte nicht skaliert werden. Negative Argumente angegeben.");
+					sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bild konnte nicht skaliert werden. Negative Argumente angegeben.");
+					SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 					return true;
 				}
 			}
 
 			try {
-				player.sendMessage(Lang.CHAT_PREFIX + "Bild wird heruntergeladen...");
+				long startDownload = System.currentTimeMillis();
+				sender.sendMessage(Lang.CHAT_PREFIX + "Bild wird heruntergeladen...");
 				final BufferedImage image = ImageIO.read(url);
-				player.sendMessage(Lang.CHAT_PREFIX + "Bild wird verarbeitet...");
+				sender.sendMessage(Lang.CHAT_PREFIX + "Bild wurde heruntergeladen. §8[" + (System.currentTimeMillis() - startDownload) + "ms]");
+				long startProccessing = System.currentTimeMillis();
+				sender.sendMessage(Lang.CHAT_PREFIX + "Bild wird verarbeitet...");
 				final String ext = url.getFile().substring(url.getFile().length() - 3);
-				final BaseFormat format = BaseFormat.valueOf(ext.toUpperCase());
+				BaseFormat format;
+				try {
+					format = BaseFormat.valueOf(ext.toUpperCase());
+				} catch (IllegalArgumentException e) {
+					format = null;
+				}
 				if (format == null) {
-					player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bilder werden nur im Format .JPG und .PNG unterstützt.");
+					sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Bilder werden nur im Format .JPG und .PNG unterstützt.");
 					return true;
 				}
 				if (args.length == 3) {
@@ -123,32 +137,49 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 					xPanes = imageX / 128;
 					yPanes = imageY / 128;
 				}
-				FileManager.createNewSketchMap(image, args[1], xPanes, yPanes, format);
-				player.sendMessage(Lang.CHAT_PREFIX + "Die SketchMap §a§o" + args[1] + "§7 wurde erfolgreich erstellt.");
+				FileManager.createNewSketchMap(image, args[1], xPanes, yPanes);
+				sender.sendMessage(Lang.CHAT_PREFIX + "Bild wurde verarbeitet. §8[" + (System.currentTimeMillis() - startProccessing) + "ms]");
+				sender.sendMessage(Lang.CHAT_PREFIX + "Die SketchMap §a§o" + args[1] + "§7 wurde erfolgreich erstellt.");
+				SoundUtils.playCommandSound(sender, CommandSound.SUCCESS);
+				return true;
 			} catch (IOException e) {
-				player.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Das Bild konnte an der angegebenen URL nicht gefunden werden, wenn du denkst das wäre ein Fehler, versuche das Bild auf imgur.com hochzuladen.");
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Das Bild konnte an der angegebenen URL nicht gefunden werden, wenn du denkst das wäre ein Fehler, versuche das Bild auf imgur.com hochzuladen.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
+				return true;
 			}
-			return true;
-
 		}
+
 		if (args[0].equalsIgnoreCase("delete")) {
 
 			if (args.length != 2) {
 				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Falsche Argumente.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
+
 			if (!Main.LoadedSketchMaps.containsKey(args[1])) {
 				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Die SketchMap §o" + args[1] + "§c existiert nicht.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
+
 			FileManager.deleteSketchMap(args[1]);
 			sender.sendMessage(Lang.CHAT_PREFIX + "Die SketchMap §a§o" + args[1] + "§7 wurde erfolreich gelöscht.");
-
+			SoundUtils.playCommandSound(sender, CommandSound.SUCCESS);
+			return true;
 		}
+
 		if (args[0].equalsIgnoreCase("get")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(Lang.CHAT_PREFIX + "§c Dieser Befehl kann nur als Spieler ausgeführt werden.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
+				return true;
+			}
+			Player player = (Player) sender;
 
 			if (args.length != 2) {
 				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Falsche Argumente.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
 			List<ItemStack> items;
@@ -165,6 +196,7 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 				final SketchMap map = Main.LoadedSketchMaps.get(args[1]);
 				if (map == null) {
 					sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Die SketchMap §o'" + args[1].toLowerCase() + "'§c existiert nicht.");
+					SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 					return true;
 				}
 				items = ItemUtils.getOrderedItemSet(map);
@@ -177,30 +209,22 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 				inv.addItem(new ItemStack[] { iStack });
 			}
 			player.openInventory(inv);
-
-		}
-		if (args[0].equalsIgnoreCase("reload")) {
-			try {
-				FileManager.reloadAllSketchMaps();
-			} catch (IOException e) {
-				sender.sendMessage(Lang.CHAT_PREFIX + "Fehler: Die SketchMaps konnten nicht geladen werden");
-				return true;
-			}
-			sender.sendMessage(Lang.CHAT_PREFIX + "Die SketchMaps wurden erfolreich neugeladen.");
 			return true;
 		}
-		
+
 		if (args[0].equalsIgnoreCase("convert")) {
 			try {
 				FileManager.convertOldData();
 			} catch (IOException e) {
 				sender.sendMessage(Lang.CHAT_PREFIX + "Fehler: Die SketchMaps konnten nicht konvertiert werden");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
 			sender.sendMessage(Lang.CHAT_PREFIX + "Die SketchMaps wurden erfolreich konvertiert.");
+			SoundUtils.playCommandSound(sender, CommandSound.SUCCESS);
 			return true;
 		}
-		
+
 		if (args[0].equalsIgnoreCase("help")) {
 			sender.sendMessage("§e§m                                                                                ");
 			sender.sendMessage("");
@@ -216,8 +240,9 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 			sender.sendMessage("§e- §a/sketchmap help §7| Zeigt die Hilfeseite.");
 			sender.sendMessage("");
 			sender.sendMessage("§e§m                                                                                ");
-
+			return true;
 		}
+
 		if (args[0].equalsIgnoreCase("list")) {
 			sender.sendMessage(Lang.CHAT_PREFIX + "Folgende SketchMaps sind geladen:");
 			final List<String> maps = new ArrayList<String>();
@@ -233,9 +258,8 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 				sender.sendMessage("§a- §e" + map2);
 			}
 			sender.sendMessage("§7Insgesamt sind §a" + maps.size() + "§7 SketchMaps geladen.");
-
+			return true;
 		}
-
 		return true;
 	}
 
@@ -243,7 +267,7 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (args.length < 2) {
-			return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("create", "delete", "get", "list", "help", "reload")), args[0]);
+			return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("create", "delete", "get", "list", "help")), args[0]);
 
 		}
 
@@ -277,10 +301,6 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 		}
 
 		if (args[0].equalsIgnoreCase("help")) {
-			return Arrays.asList();
-		}
-
-		if (args[0].equalsIgnoreCase("reload")) {
 			return Arrays.asList();
 		}
 

@@ -14,36 +14,39 @@ public class SketchMap {
 	private Integer xPanes;
 	private Integer yPanes;
 	private BaseFormat format;
-	private Map<RelativeLocation, MapView> mapCollection;
+	private Map<RelativeLocation, MapView> mapviews;
+	private Map<Short, RelativeLocation> mapping;
 
-	public SketchMap(final BufferedImage image, final String mapID, final int xPanes, final int yPanes, final BaseFormat format, final Map<Short, RelativeLocation> mapCollection) {
-		this.image = SketchMapUtils.resize(image, xPanes * 128, yPanes * 128);
+	public SketchMap(final BufferedImage image, final String mapID, final int xPanes, final int yPanes, final BaseFormat format, final Map<Short, RelativeLocation> mapping) {
+		if (!((image.getWidth() == xPanes * 128) && (image.getHeight() == yPanes * 128)))
+			this.image = SketchMapUtils.resize(image, xPanes * 128, yPanes * 128);
+		else
+			this.image = image;
 		this.mapID = mapID;
 		this.xPanes = xPanes;
 		this.yPanes = yPanes;
 		this.format = format;
-		this.mapCollection = new HashMap<RelativeLocation, MapView>();
-		this.loadSketchMap(mapCollection);
+		this.mapping = mapping;
+		this.mapviews = new HashMap<RelativeLocation, MapView>();
+		loadSketchMap();
 	}
 
-	private void loadSketchMap(final Map<Short, RelativeLocation> mapCollection) {
-		for (final Short mapID : mapCollection.keySet()) {
-			final RelativeLocation loc = mapCollection.get(mapID);
-			this.initMap(loc.getX(), loc.getY(), SketchMapUtils.getMapView(mapID));
+	public void loadSketchMap() {
+		this.mapviews.clear();
+		for (final Short mapID : this.mapping.keySet()) {
+			RelativeLocation relativelocation = this.mapping.get(mapID);
+			MapView mapview = SketchMapUtils.getMapView(mapID);
+			BufferedImage subImage = this.image.getSubimage(relativelocation.getX() * 128, relativelocation.getY() * 128, 128, 128);
+			for (MapRenderer rend : mapview.getRenderers()) {
+				mapview.removeRenderer(rend);
+			}
+			mapview.addRenderer((MapRenderer) new ImageRenderer(subImage));
+			this.mapviews.put(relativelocation, mapview);
 		}
 	}
 
-	private void initMap(final int x, final int y, final MapView mapView) {
-		final BufferedImage subImage = this.image.getSubimage(x * 128, y * 128, 128, 128);
-		for (final MapRenderer rend : mapView.getRenderers()) {
-			mapView.removeRenderer(rend);
-		}
-		mapView.addRenderer((MapRenderer) new ImageRenderer(subImage));
-		this.mapCollection.put(new RelativeLocation(x, y), mapView);
-	}
-
-	public void unloadMap() {
-		for (MapView mapview : mapCollection.values()) {
+	public void unloadSketchMap() {
+		for (MapView mapview : this.mapviews.values()) {
 			for (MapRenderer maprenderer : mapview.getRenderers()) {
 				mapview.removeRenderer(maprenderer);
 			}
@@ -66,38 +69,11 @@ public class SketchMap {
 		return this.yPanes;
 	}
 
-	public Map<RelativeLocation, MapView> getMapCollection() {
-		return this.mapCollection;
+	public Map<RelativeLocation, MapView> getMapViews() {
+		return this.mapviews;
 	}
 
 	public BaseFormat getBaseFormat() {
 		return this.format;
 	}
-
-	// public enum BaseFormat {
-	// PNG("PNG", 0), JPEG("JPEG", 1);
-	//
-	// private BaseFormat(final String s, final int n) {
-	// }
-	//
-	// public String getExtension() {
-	// if (this == BaseFormat.PNG) {
-	// return "png";
-	// }
-	// if (this == BaseFormat.JPEG) {
-	// return "jpg";
-	// }
-	// return null;
-	// }
-	//
-	// public static BaseFormat fromExtension(final String ext) {
-	// if (ext.equalsIgnoreCase("png")) {
-	// return BaseFormat.PNG;
-	// }
-	// if (ext.equalsIgnoreCase("jpg")) {
-	// return BaseFormat.JPEG;
-	// }
-	// return null;
-	// }
-	// }
 }

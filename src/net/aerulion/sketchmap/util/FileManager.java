@@ -55,33 +55,21 @@ public class FileManager {
 
 	public static void deleteSketchMap(String sketchmapid) {
 		SketchMap sketchmap = Main.LoadedSketchMaps.get(sketchmapid);
-		sketchmap.unloadMap();
+		sketchmap.unloadSketchMap();
 		Main.LoadedSketchMaps.remove(sketchmapid);
 		File sketchmapFile = new File("plugins/SketchMap/SketchMaps", sketchmapid + ".sketchmap");
 		sketchmapFile.delete();
 	}
 
-	public static void createNewSketchMap(BufferedImage image, String sketchmapid, int xpanes, int ypanes, BaseFormat baseformat) {
-		int width = image.getWidth();
-		int height = image.getHeight();
-		int[] pixels = image.getRGB(0, 0, width, height, null, 0, width);
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		image.setRGB(0, 0, width, height, pixels, 0, width);
+	public static void createNewSketchMap(BufferedImage image, String sketchmapid, int xpanes, int ypanes) {
 		Map<Short, RelativeLocation> mapping = new HashMap<Short, RelativeLocation>();
 		for (int x = 0; x < xpanes; ++x) {
 			for (int y = 0; y < ypanes; ++y) {
 				mapping.put((short) Bukkit.createMap(SketchMapUtils.getDefaultWorld()).getId(), RelativeLocation.fromString(x + ":" + y));
 			}
 		}
-		Main.LoadedSketchMaps.put(sketchmapid, new SketchMap(image, sketchmapid, xpanes, ypanes, baseformat, mapping));
+		Main.LoadedSketchMaps.put(sketchmapid, new SketchMap(image, sketchmapid, xpanes, ypanes, BaseFormat.PNG, mapping));
 		saveSpecificSketchMapToFile(sketchmapid);
-	}
-
-	public static void reloadAllSketchMaps() throws IOException {
-		for (SketchMap sketchmap : Main.LoadedSketchMaps.values())
-			sketchmap.unloadMap();
-		Main.LoadedSketchMaps.clear();
-		loadAllSketchMaps();
 	}
 
 	public static void convertOldData() throws IOException {
@@ -103,11 +91,6 @@ public class FileManager {
 	public static void convertSingleOldFile(File file) throws IOException {
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		BufferedImage image = Base64Utils.base64StringToImgOLD(cfg.getString("map-image"));
-		int width = image.getWidth();
-		int height = image.getHeight();
-		int[] pixels = image.getRGB(0, 0, width, height, null, 0, width);
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		image.setRGB(0, 0, width, height, pixels, 0, width);
 		Map<Short, RelativeLocation> mapping = new HashMap<Short, RelativeLocation>();
 		for (String map : cfg.getStringList("map-collection")) {
 			String[] split = map.split(" ");
@@ -118,10 +101,7 @@ public class FileManager {
 		String sketchmapid = file.getName().substring(0, file.getName().length() - 10);
 		int xpanes = cfg.getInt("x-panes");
 		int ypanes = cfg.getInt("y-panes");
-		String oldformat = cfg.getString("base-format");
-		if (oldformat.equalsIgnoreCase("jpeg"))
-			oldformat = "JPG";
-		BaseFormat baseformat = BaseFormat.valueOf(oldformat);
+		BaseFormat baseformat = BaseFormat.PNG;
 		Main.LoadedSketchMaps.put(sketchmapid, new SketchMap(image, sketchmapid, xpanes, ypanes, baseformat, mapping));
 		saveSpecificSketchMapToFile(sketchmapid);
 	}
