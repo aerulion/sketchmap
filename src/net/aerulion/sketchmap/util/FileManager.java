@@ -16,9 +16,14 @@ import net.aerulion.sketchmap.task.SaveTask;
 
 public class FileManager {
 
-	public static void loadSpecificSketchMapFromFile(File SketchMapToLoad) throws IOException {
+	public static void loadSpecificSketchMapFromFile(File SketchMapToLoad) {
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(SketchMapToLoad);
-		BufferedImage image = Base64Utils.base64StringToImg(cfg.getString("IMAGE"));
+		BufferedImage image = null;
+		try {
+			image = Base64Utils.base64StringToImg(cfg.getString("IMAGE"));
+		} catch (IOException e) {
+			TextUtils.sendColoredConsoleMessage(Lang.CHAT_PREFIX + "§cFehler: Die Datei " + SketchMapToLoad.getName() + " konnte nicht geladen werden");
+		}
 		Map<Short, RelativeLocation> mapping = new HashMap<Short, RelativeLocation>();
 		for (String map : cfg.getStringList("MAPPING")) {
 			String[] split = map.split(" ");
@@ -33,7 +38,7 @@ public class FileManager {
 		Main.LoadedSketchMaps.put(sketchmapid, new SketchMap(image, sketchmapid, xpanes, ypanes, baseformat, mapping));
 	}
 
-	public static void loadAllSketchMaps() throws IOException {
+	public static void loadAllSketchMaps() {
 		long start = System.currentTimeMillis();
 		int count = 0;
 		File folder = new File("plugins/SketchMap/SketchMaps");

@@ -1,6 +1,5 @@
 package net.aerulion.sketchmap;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,11 +23,7 @@ public class Main extends JavaPlugin {
 		getCommand("sketchmap").setTabCompleter(new CMD_SKETCHMAP());
 
 		TextUtils.sendColoredConsoleMessage(Lang.CONSOLE_LOADING_SKETCHMAPS);
-		try {
-			FileManager.loadAllSketchMaps();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		FileManager.loadAllSketchMaps();
 		TextUtils.sendColoredConsoleMessage(Lang.CONSOLE_PLUGIN_ENABLED);
 	}
 
