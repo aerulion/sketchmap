@@ -57,6 +57,10 @@ public class SketchMap {
 		return this.mapID;
 	}
 
+	public void setID(String id) {
+		this.mapID = id;
+	}
+
 	public BufferedImage getImage() {
 		return this.image;
 	}

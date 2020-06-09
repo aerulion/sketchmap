@@ -66,6 +66,15 @@ public class FileManager {
 		sketchmapFile.delete();
 	}
 
+	public static void renameSketchMap(String sketchmapid, String newname) {
+		File oldFile = new File("plugins/SketchMap/SketchMaps", sketchmapid + ".sketchmap");
+		oldFile.delete();
+		Main.LoadedSketchMaps.put(newname, Main.LoadedSketchMaps.remove(sketchmapid));
+		SketchMap sketchmap = Main.LoadedSketchMaps.get(newname);
+		sketchmap.setID(newname);
+		saveSpecificSketchMapToFile(newname);
+	}
+
 	public static void createNewSketchMap(BufferedImage image, String sketchmapid, int xpanes, int ypanes) {
 		Map<Short, RelativeLocation> mapping = new HashMap<Short, RelativeLocation>();
 		for (int x = 0; x < xpanes; ++x) {
@@ -74,40 +83,6 @@ public class FileManager {
 			}
 		}
 		Main.LoadedSketchMaps.put(sketchmapid, new SketchMap(image, sketchmapid, xpanes, ypanes, BaseFormat.PNG, mapping));
-		saveSpecificSketchMapToFile(sketchmapid);
-	}
-
-	public static void convertOldData() throws IOException {
-		long start = System.currentTimeMillis();
-		int count = 0;
-		File folder = new File("plugins/SketchMap/CONVERT");
-		File[] listOfFiles = folder.listFiles();
-		if (listOfFiles != null) {
-			for (File file : listOfFiles) {
-				if (file.isFile()) {
-					convertSingleOldFile(file);
-					count++;
-				}
-			}
-		}
-		TextUtils.sendColoredConsoleMessage(Lang.CHAT_PREFIX + "§a" + count + Lang.CONSOLE_SKETCHMAPS_LOADED + (System.currentTimeMillis() - start) + "ms");
-	}
-
-	public static void convertSingleOldFile(File file) throws IOException {
-		FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-		BufferedImage image = Base64Utils.base64StringToImgOLD(cfg.getString("map-image"));
-		Map<Short, RelativeLocation> mapping = new HashMap<Short, RelativeLocation>();
-		for (String map : cfg.getStringList("map-collection")) {
-			String[] split = map.split(" ");
-			RelativeLocation loc = RelativeLocation.fromString(split[0]);
-			Short id = Short.parseShort(split[1]);
-			mapping.put(id, loc);
-		}
-		String sketchmapid = file.getName().substring(0, file.getName().length() - 10);
-		int xpanes = cfg.getInt("x-panes");
-		int ypanes = cfg.getInt("y-panes");
-		BaseFormat baseformat = BaseFormat.PNG;
-		Main.LoadedSketchMaps.put(sketchmapid, new SketchMap(image, sketchmapid, xpanes, ypanes, baseformat, mapping));
 		saveSpecificSketchMapToFile(sketchmapid);
 	}
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,7 +66,7 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 				return true;
 			}
 
-			if (Main.LoadedSketchMaps.containsKey(args[1])) {
+			if (Main.LoadedSketchMaps.containsKey(args[1].toLowerCase())) {
 				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Diese SketchMap ID existiert bereits.");
 				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
@@ -137,7 +136,7 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 					xPanes = imageX / 128;
 					yPanes = imageY / 128;
 				}
-				FileManager.createNewSketchMap(image, args[1], xPanes, yPanes);
+				FileManager.createNewSketchMap(image, args[1].toLowerCase(), xPanes, yPanes);
 				sender.sendMessage(Lang.CHAT_PREFIX + "Bild wurde verarbeitet. §8[" + (System.currentTimeMillis() - startProccessing) + "ms]");
 				sender.sendMessage(Lang.CHAT_PREFIX + "Die SketchMap §a§o" + args[1] + "§7 wurde erfolgreich erstellt.");
 				SoundUtils.playCommandSound(sender, CommandSound.SUCCESS);
@@ -195,7 +194,7 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 			} else {
 				final SketchMap map = Main.LoadedSketchMaps.get(args[1]);
 				if (map == null) {
-					sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Die SketchMap §o'" + args[1].toLowerCase() + "'§c existiert nicht.");
+					sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Die SketchMap §o'" + args[1] + "'§c existiert nicht.");
 					SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 					return true;
 				}
@@ -212,16 +211,67 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 			return true;
 		}
 
-		if (args[0].equalsIgnoreCase("convert")) {
-			try {
-				FileManager.convertOldData();
-			} catch (IOException e) {
-				sender.sendMessage(Lang.CHAT_PREFIX + "Fehler: Die SketchMaps konnten nicht konvertiert werden");
+		if (args[0].equalsIgnoreCase("give")) {
+			if (args.length != 3) {
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Falsche Argumente.");
 				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
 				return true;
 			}
-			sender.sendMessage(Lang.CHAT_PREFIX + "Die SketchMaps wurden erfolreich konvertiert.");
+			Player player = Bukkit.getPlayer(args[1]);
+
+			if (player == null) {
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Der Spieler §o'" + args[1] + "'§c ist nicht online.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
+				return true;
+			}
+
+			final SketchMap map = Main.LoadedSketchMaps.get(args[2]);
+			if (map == null) {
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Die SketchMap §o'" + args[1] + "'§c existiert nicht.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
+				return true;
+			}
+			List<ItemStack> items = ItemUtils.getOrderedItemSet(map);
+
+			int inventorySize;
+			for (inventorySize = items.size() + 1; inventorySize % 9 != 0; ++inventorySize) {
+			}
+			final Inventory inv = Bukkit.createInventory(null, inventorySize, "§8SketchMap ID: §2§l" + args[2]);
+			for (final ItemStack iStack : items) {
+				inv.addItem(new ItemStack[] { iStack });
+			}
+			player.openInventory(inv);
+			return true;
+		}
+
+		if (args[0].equalsIgnoreCase("rename")) {
+			if (args.length != 3) {
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Falsche Argumente.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
+				return true;
+			}
+
+			SketchMap sketchmap = Main.LoadedSketchMaps.get(args[1]);
+
+			if (sketchmap == null) {
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Die SketchMap §o'" + args[1] + "'§c existiert nicht.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
+				return true;
+			}
+
+			if (Main.LoadedSketchMaps.containsKey(args[2].toLowerCase())) {
+				sender.sendMessage(Lang.CHAT_PREFIX + "§cFehler: Die SketchMap-ID §o'" + args[2] + "'§c existiert bereits.");
+				SoundUtils.playCommandSound(sender, CommandSound.ERROR);
+				return true;
+			}
+
+			FileManager.renameSketchMap(args[1], args[2].toLowerCase());
+			sender.sendMessage(Lang.CHAT_PREFIX + "Die SketchMap §a§o'" + args[1] + "'§7 wurde in §a§o'" + args[2].toLowerCase() + "'§7 umbenannt.");
 			SoundUtils.playCommandSound(sender, CommandSound.SUCCESS);
+			return true;
+		}
+
+		if (args[0].equalsIgnoreCase("convert")) {
 			return true;
 		}
 
@@ -267,8 +317,7 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (args.length < 2) {
-			return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("create", "delete", "get", "list", "help")), args[0]);
-
+			return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("create", "delete", "get", "list", "help", "give", "rename")), args[0]);
 		}
 
 		if (args[0].equalsIgnoreCase("create")) {
@@ -296,6 +345,26 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
 		if (args[0].equalsIgnoreCase("get")) {
 			if (args.length == 2) {
 				return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
+			}
+			return Arrays.asList();
+		}
+
+		if (args[0].equalsIgnoreCase("give")) {
+			if (args.length == 2) {
+				return null;
+			}
+			if (args.length == 3) {
+				return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
+			}
+			return Arrays.asList();
+		}
+
+		if (args[0].equalsIgnoreCase("rename")) {
+			if (args.length == 2) {
+				return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
+			}
+			if (args.length == 3) {
+				return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("<NeuerName>")), args[1]);
 			}
 			return Arrays.asList();
 		}
