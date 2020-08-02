@@ -11,19 +11,19 @@ import java.util.Iterator;
 
 public class SketchMapUtils {
 
-    public static BufferedImage resize(Image img, final Integer width, final Integer height) {
-        img = img.getScaledInstance(width, height, 4);
-        if (img instanceof BufferedImage) {
-            return (BufferedImage) img;
+    public static BufferedImage resize(Image image, int width, int height) {
+        image = image.getScaledInstance(width, height, 4);
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
         }
-        final BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), 2);
-        final Graphics2D bGr = bimage.createGraphics();
-        bGr.drawImage(img, 0, 0, null);
-        bGr.dispose();
-        return bimage;
+        final BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), 2);
+        final Graphics2D graphics2D = bufferedImage.createGraphics();
+        graphics2D.drawImage(image, 0, 0, null);
+        graphics2D.dispose();
+        return bufferedImage;
     }
 
-    public static MapView getMapView(final short id) {
+    public static MapView getMapView(int id) {
         final MapView map = Bukkit.getMap(id);
         if (map != null) {
             return map;
@@ -35,17 +35,17 @@ public class SketchMapUtils {
         return Bukkit.getWorlds().get(0);
     }
 
-    public static ArrayList<String> filterForTabcomplete(ArrayList<String> Input, String Filter) {
-        if (Filter != null) {
-            for (Iterator<String> iterator = Input.iterator(); iterator.hasNext(); ) {
+    public static ArrayList<String> filterForTabComplete(ArrayList<String> input, String filter) {
+        if (filter != null) {
+            for (Iterator<String> iterator = input.iterator(); iterator.hasNext(); ) {
                 String value = iterator.next();
-                if (!value.toLowerCase().startsWith(Filter.toLowerCase())) {
+                if (!value.toLowerCase().startsWith(filter.toLowerCase())) {
                     {
                         iterator.remove();
                     }
                 }
             }
         }
-        return Input;
+        return input;
     }
 }

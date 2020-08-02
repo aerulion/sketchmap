@@ -1,10 +1,10 @@
 package net.aerulion.sketchmap.util;
 
 public class RelativeLocation {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
-    public RelativeLocation(final int x, final int y) {
+    public RelativeLocation(int x, int y) {
         this.x = x;
         this.y = y;
     }

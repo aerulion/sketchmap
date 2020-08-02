@@ -15,31 +15,31 @@ import java.util.List;
 
 public class SaveTask extends BukkitRunnable {
 
-    private final String sketchmapid;
+    private final String sketchMapID;
 
-    public SaveTask(String sketchmapid) {
-        this.sketchmapid = sketchmapid;
+    public SaveTask(String sketchMapID) {
+        this.sketchMapID = sketchMapID;
         this.runTaskAsynchronously(Main.plugin);
     }
 
     @Override
     public void run() {
-        SketchMap sketchmap = Main.LoadedSketchMaps.get(this.sketchmapid);
-        File sketchmapFile = new File("plugins/SketchMap/SketchMaps", this.sketchmapid + ".sketchmap");
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(sketchmapFile);
-        cfg.set("IMAGE", Base64Utils.imgToBase64String(sketchmap.getImage(), sketchmap.getBaseFormat().name()));
-        cfg.set("SKETCHMAPID", sketchmap.getID());
-        cfg.set("XPANES", sketchmap.getXPanes());
-        cfg.set("YPANES", sketchmap.getYPanes());
-        cfg.set("BASEFORMAT", sketchmap.getBaseFormat().name());
-        final List<String> mapping = new ArrayList<String>();
-        for (final RelativeLocation loc : sketchmap.getMapViews().keySet()) {
-            mapping.add(String.valueOf(String.valueOf(loc.toString())) + " " + sketchmap.getMapViews().get(loc).getId());
-        }
-        cfg.set("MAPPING", mapping);
+        SketchMap sketchMap = Main.LoadedSketchMaps.get(this.sketchMapID);
+        File file = new File("plugins/SketchMap/SketchMaps", this.sketchMapID + ".sketchmap");
+        FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
         try {
-            cfg.save(sketchmapFile);
-        } catch (IOException e) {
+            fileConfiguration.set("IMAGE", Base64Utils.encodeImage(sketchMap.getImage(), sketchMap.getBaseFormat().name()));
+            fileConfiguration.set("SKETCHMAPID", sketchMap.getID());
+            fileConfiguration.set("XPANES", sketchMap.getXPanes());
+            fileConfiguration.set("YPANES", sketchMap.getYPanes());
+            fileConfiguration.set("BASEFORMAT", sketchMap.getBaseFormat().name());
+            final List<String> mapping = new ArrayList<>();
+            for (final RelativeLocation loc : sketchMap.getMapViews().keySet()) {
+                mapping.add(loc.toString() + " " + sketchMap.getMapViews().get(loc).getId());
+            }
+            fileConfiguration.set("MAPPING", mapping);
+            fileConfiguration.save(file);
+        } catch (IOException ignored) {
         }
     }
 }

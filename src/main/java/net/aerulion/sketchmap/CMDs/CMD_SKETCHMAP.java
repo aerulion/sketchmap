@@ -263,10 +263,6 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("convert")) {
-            return true;
-        }
-
         if (args[0].equalsIgnoreCase("help")) {
             sender.sendMessage("§e§m                                                                                ");
             sender.sendMessage("");
@@ -309,34 +305,34 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 
         if (args.length < 2) {
-            return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("create", "delete", "get", "list", "help", "give", "rename")), args[0]);
+            return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Arrays.asList("create", "delete", "get", "list", "help", "give", "rename")), args[0]);
         }
 
         if (args[0].equalsIgnoreCase("create")) {
             if (args.length == 2) {
-                return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("<Name>")), args[1]);
+                return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Arrays.asList("<Name>")), args[1]);
             }
 
             if (args.length == 3) {
-                return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("<Bild-URL>")), args[2]);
+                return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Arrays.asList("<Bild-URL>")), args[2]);
             }
 
             if (args.length == 4) {
-                return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("[X:Y]")), args[3]);
+                return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Arrays.asList("[X:Y]")), args[3]);
             }
             return Arrays.asList();
         }
 
         if (args[0].equalsIgnoreCase("delete")) {
             if (args.length == 2) {
-                return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
+                return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
             }
             return Arrays.asList();
         }
 
         if (args[0].equalsIgnoreCase("get")) {
             if (args.length == 2) {
-                return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
+                return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
             }
             return Arrays.asList();
         }
@@ -346,17 +342,17 @@ public class CMD_SKETCHMAP implements CommandExecutor, TabCompleter {
                 return null;
             }
             if (args.length == 3) {
-                return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
+                return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
             }
             return Arrays.asList();
         }
 
         if (args[0].equalsIgnoreCase("rename")) {
             if (args.length == 2) {
-                return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
+                return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Main.LoadedSketchMaps.keySet()), args[1]);
             }
             if (args.length == 3) {
-                return SketchMapUtils.filterForTabcomplete(new ArrayList<String>(Arrays.asList("<NeuerName>")), args[1]);
+                return SketchMapUtils.filterForTabComplete(new ArrayList<String>(Arrays.asList("<NeuerName>")), args[1]);
             }
             return Arrays.asList();
         }
