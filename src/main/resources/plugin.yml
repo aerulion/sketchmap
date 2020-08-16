@@ -1,8 +1,12 @@
 name: SketchMap
-version: 1.0
+version: 2.0
 main: net.aerulion.sketchmap.Main
 api-version: 1.16
+depend: [Nucleus]
 commands:
   sketchmap:
-    description: SketchMap Core Command
-    usage: /sketchmap help
+    description: SketchMap main command.
+permissions:
+  sketchmap.use:
+    description: Allows the player to use the plugin.
+    default: op

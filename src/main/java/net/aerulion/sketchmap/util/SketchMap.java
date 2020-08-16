@@ -8,75 +8,69 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SketchMap {
-    private final BufferedImage image;
-    private String mapID;
-    private final int xPanes;
-    private final int yPanes;
-    private final BaseFormat format;
-    private final Map<RelativeLocation, MapView> mapviews;
-    private final Map<Short, RelativeLocation> mapping;
 
-    public SketchMap(BufferedImage image, String mapID, int xPanes, int yPanes, BaseFormat format, Map<Short, RelativeLocation> mapping) {
-        if (!((image.getWidth() == xPanes * 128) && (image.getHeight() == yPanes * 128)))
-            this.image = SketchMapUtils.resize(image, xPanes * 128, yPanes * 128);
-        else
-            this.image = image;
-        this.mapID = mapID;
-        this.xPanes = xPanes;
-        this.yPanes = yPanes;
-        this.format = format;
-        this.mapping = mapping;
-        this.mapviews = new HashMap<>();
+    private final String UUID;
+    private final String NAMESPACE_ID;
+    private final BufferedImage IMAGE;
+    private final int X_PANES;
+    private final int Y_PANES;
+    private final Map<Integer, RelativeLocation> MAPPING;
+    private final Map<RelativeLocation, MapView> MAPVIEWS;
+
+    public SketchMap(String UUID, String NAMESPACE_ID, BufferedImage IMAGE, int X_PANES, int Y_PANES, Map<Integer, RelativeLocation> MAPPING) {
+        this.UUID = UUID;
+        this.NAMESPACE_ID = NAMESPACE_ID;
+        this.IMAGE = (IMAGE.getWidth() == X_PANES * 128) && (IMAGE.getHeight() == Y_PANES * 128) ? IMAGE : Utils.resize(IMAGE, X_PANES * 128, Y_PANES * 128);
+        this.X_PANES = X_PANES;
+        this.Y_PANES = Y_PANES;
+        this.MAPPING = MAPPING;
+        this.MAPVIEWS = new HashMap<>();
         loadSketchMap();
     }
 
     public void loadSketchMap() {
-        this.mapviews.clear();
-        for (final Short mapID : this.mapping.keySet()) {
-            RelativeLocation relativelocation = this.mapping.get(mapID);
-            MapView mapview = SketchMapUtils.getMapView(mapID);
-            BufferedImage subImage = this.image.getSubimage(relativelocation.getX() * 128, relativelocation.getY() * 128, 128, 128);
-            for (MapRenderer rend : mapview.getRenderers()) {
-                mapview.removeRenderer(rend);
+        this.MAPVIEWS.clear();
+        for (int mapID : this.MAPPING.keySet()) {
+            RelativeLocation relativelocation = this.MAPPING.get(mapID);
+            MapView mapView = Utils.getMapView(mapID);
+            BufferedImage subImage = this.IMAGE.getSubimage(relativelocation.getX() * 128, relativelocation.getY() * 128, 128, 128);
+            for (MapRenderer mapRenderer : mapView.getRenderers()) {
+                mapView.removeRenderer(mapRenderer);
             }
-            mapview.addRenderer(new ImageRenderer(subImage));
-            this.mapviews.put(relativelocation, mapview);
+            mapView.addRenderer(new ImageRenderer(subImage));
+            this.MAPVIEWS.put(relativelocation, mapView);
         }
     }
 
     public void unloadSketchMap() {
-        for (MapView mapview : this.mapviews.values()) {
+        for (MapView mapview : this.MAPVIEWS.values()) {
             for (MapRenderer maprenderer : mapview.getRenderers()) {
                 mapview.removeRenderer(maprenderer);
             }
         }
     }
 
-    public String getID() {
-        return this.mapID;
+    public String getUUID() {
+        return UUID;
     }
 
-    public void setID(String id) {
-        this.mapID = id;
+    public String getNamespaceID() {
+        return NAMESPACE_ID;
     }
 
     public BufferedImage getImage() {
-        return this.image;
+        return IMAGE;
     }
 
     public int getXPanes() {
-        return this.xPanes;
+        return X_PANES;
     }
 
     public int getYPanes() {
-        return this.yPanes;
+        return Y_PANES;
     }
 
     public Map<RelativeLocation, MapView> getMapViews() {
-        return this.mapviews;
-    }
-
-    public BaseFormat getBaseFormat() {
-        return this.format;
+        return MAPVIEWS;
     }
 }

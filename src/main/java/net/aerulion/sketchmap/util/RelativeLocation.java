@@ -11,7 +11,7 @@ public class RelativeLocation {
 
     @Override
     public String toString() {
-        return this.x + ":" + this.y;
+        return x + ":" + y;
     }
 
     public static RelativeLocation fromString(final String str) {
@@ -19,22 +19,20 @@ public class RelativeLocation {
         if (args.length != 2) {
             return null;
         }
-        int x;
-        int y;
         try {
-            x = Integer.parseInt(args[0]);
-            y = Integer.parseInt(args[1]);
-        } catch (Exception ex) {
+            int x = Integer.parseInt(args[0]);
+            int y = Integer.parseInt(args[1]);
+            return new RelativeLocation(x, y);
+        } catch (NumberFormatException exception) {
             return null;
         }
-        return new RelativeLocation(x, y);
     }
 
     public int getX() {
-        return this.x;
+        return x;
     }
 
     public int getY() {
-        return this.y;
+        return y;
     }
 }

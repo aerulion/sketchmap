@@ -1,5 +1,7 @@
 package net.aerulion.sketchmap.util;
 
+import net.aerulion.nucleus.api.nbt.NbtUtils;
+import net.aerulion.nucleus.api.string.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
@@ -14,17 +16,16 @@ public class ItemUtils {
         final List<ItemStack> items = new ArrayList<>();
         for (int y = 0; y < sketchMap.getYPanes(); ++y) {
             for (int x = 0; x < sketchMap.getXPanes(); ++x) {
-                for (final RelativeLocation loc : sketchMap.getMapViews().keySet()) {
-                    if (loc.getX() == x) {
-                        if (loc.getY() != y) {
+                for (RelativeLocation relativeLocation : sketchMap.getMapViews().keySet()) {
+                    if (relativeLocation.getX() == x) {
+                        if (relativeLocation.getY() != y)
                             continue;
-                        }
-                        final ItemStack iStack = new ItemStack(Material.FILLED_MAP, 1);
-                        final MapMeta iMeta = (MapMeta) iStack.getItemMeta();
-                        iMeta.setMapView(sketchMap.getMapViews().get(loc));
-                        iMeta.setLore(Arrays.asList("§e§m                           ", "§7SketchMap ID: §a" + sketchMap.getID(), "§7Pos-X: §a" + (x + 1), "§7Pos-Y: §a" + (y + 1), "§e§m                           "));
-                        iStack.setItemMeta(iMeta);
-                        items.add(iStack);
+                        ItemStack itemStack = new ItemStack(Material.FILLED_MAP, 1);
+                        MapMeta mapMeta = (MapMeta) itemStack.getItemMeta();
+                        mapMeta.setMapView(sketchMap.getMapViews().get(relativeLocation));
+                        mapMeta.setLore(Arrays.asList("§7" + StringUtils.generateLine(11), "§7Pos-X: §a" + (x + 1), "§7Pos-Y: §a" + (y + 1), "§7" + StringUtils.generateLine(11), "§8sketchmap:" + sketchMap.getNamespaceID()));
+                        itemStack.setItemMeta(mapMeta);
+                        items.add(NbtUtils.setNBTString(itemStack, "SketchMapUUID", sketchMap.getUUID()));
                     }
                 }
             }
