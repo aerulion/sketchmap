@@ -62,7 +62,7 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
                 return true;
             }
             if (Utils.isInvalidNamespaceID(args[1])) {
-                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_ALPHANUMERIC.get());
+                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_ILLEGAL_CHARACTERS.get());
                 SoundUtils.playSound(commandSender, SoundType.ERROR);
                 return true;
             }
@@ -125,7 +125,7 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
                 return true;
             }
             if (Utils.isInvalidNamespaceID(args[2])) {
-                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_ALPHANUMERIC.get());
+                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_ILLEGAL_CHARACTERS.get());
                 SoundUtils.playSound(commandSender, SoundType.ERROR);
                 return true;
             }
@@ -237,11 +237,14 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
             commandSender.sendMessage("");
             ChatUtils.sendCenteredChatMessage(commandSender, "§e" + StringUtils.generateLine(30));
             commandSender.sendMessage("");
-            commandSender.sendMessage("§e- §a/sketchmap create <Name> <Bild-URL> [X:Y] §7| Erstellt eine neue SketchMap.");
-            commandSender.sendMessage("§e- §a/sketchmap delete <Name> §7| Löscht die angegebene SketchMap.");
-            commandSender.sendMessage("§e- §a/sketchmap get <Name> §7| Öffnet ein Inventar mit den benötigten Karten.");
-            commandSender.sendMessage("§e- §a/sketchmap list §7| Listet alle geladenen SketchMaps auf.");
-            commandSender.sendMessage("§e- §a/sketchmap help §7| Zeigt die Hilfeseite.");
+            commandSender.sendMessage("§e- §a/sketchmap create <NamespaceID> <Bild-URL> [X:Y] §7| Erstellt eine neue SketchMap.");
+            commandSender.sendMessage("§e- §a/sketchmap delete <NamespaceID> §7| Löscht die angegebene SketchMap.");
+            commandSender.sendMessage("§e- §a/sketchmap get <NamespaceID> §7| Öffnet ein Inventar mit den benötigten Karten.");
+            commandSender.sendMessage("§e- §a/sketchmap give <NamespaceID> <Spieler> §7| Öffnet dem angegebenen Spieler ein Inventar mit den benötigten Karten.");
+            commandSender.sendMessage("§e- §a/sketchmap rename <AlteNamespaceID> <NeueNamespaceID>§7| Bennent die angegebene SketchMap um.");
+            commandSender.sendMessage("§e- §a/sketchmap exchangeimage <NamespaceID> <Bild-URL> §7| Ersetzt das ursprüngliche Bild mit dem neuen Bild.");
+            commandSender.sendMessage("§e- §a/sketchmap setowner <NamespaceID> <Spieler> §7| Setzt den angegebenen Spieler als Besitzer der SketchMap.");
+            commandSender.sendMessage("§e- §a/sketchmap help §7| Zeigt diese Hilfeseite.");
             commandSender.sendMessage("");
             ChatUtils.sendChatDividingLine(commandSender, "§e");
             return true;

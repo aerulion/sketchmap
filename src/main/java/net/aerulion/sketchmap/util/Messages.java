@@ -14,7 +14,7 @@ public enum Messages {
     ERROR_DELETING_SKETCHMAP("§cFehler: Die SketchMap konnte nicht gelöscht werden."),
     ERROR_FETCHING_IMAGE("§cFehler: Das Bild konnte an der angegebenen URL nicht gefunden werden. Wenn du denkst dies wäre ein Fehler, versuche das Bild auf imgur.com hochzuladen."),
     ERROR_MALFORMED_URL("§cFehler: Das Bild konnte nicht geladen werden. Die URL erscheint ungültig."),
-    ERROR_NAMESPACE_ID_ALPHANUMERIC("§cFehler: Die Namespace ID muss alphanumerisch sein."),
+    ERROR_NAMESPACE_ID_ILLEGAL_CHARACTERS("§cFehler: Die Namespace ID darf nur die Zahlen von 0-9, die Kleinbuchstaben von a-z und ein / oder _ enthalten."),
     ERROR_NAMESPACE_ID_ALREADY_TAKEN("§cFehler: Diese Namespace ID ist bereits vergeben."),
     ERROR_NAMESPACE_ID_LENGTH("§cFehler: Die Namespace ID muss zwischen 3-48 Zeichen lang sein."),
     ERROR_NAMESPACE_ID_NOT_FOUND("§cFehler: Es existiert keine SketchMap mit folgender Namespace ID: "),
