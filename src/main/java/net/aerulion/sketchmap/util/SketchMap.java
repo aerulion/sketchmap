@@ -10,21 +10,23 @@ import java.util.Map;
 public class SketchMap {
 
     private final String UUID;
-    private final String NAMESPACE_ID;
-    private final BufferedImage IMAGE;
+    private String namespaceID;
+    private BufferedImage image;
     private final int X_PANES;
     private final int Y_PANES;
     private final Map<Integer, RelativeLocation> MAPPING;
     private final Map<RelativeLocation, MapView> MAPVIEWS;
+    private String owner;
 
-    public SketchMap(String UUID, String NAMESPACE_ID, BufferedImage IMAGE, int X_PANES, int Y_PANES, Map<Integer, RelativeLocation> MAPPING) {
+    public SketchMap(String UUID, String namespaceID, BufferedImage image, int X_PANES, int Y_PANES, Map<Integer, RelativeLocation> MAPPING, String owner) {
         this.UUID = UUID;
-        this.NAMESPACE_ID = NAMESPACE_ID;
-        this.IMAGE = (IMAGE.getWidth() == X_PANES * 128) && (IMAGE.getHeight() == Y_PANES * 128) ? IMAGE : Utils.resize(IMAGE, X_PANES * 128, Y_PANES * 128);
+        this.namespaceID = namespaceID;
         this.X_PANES = X_PANES;
         this.Y_PANES = Y_PANES;
+        setImage(image);
         this.MAPPING = MAPPING;
         this.MAPVIEWS = new HashMap<>();
+        this.owner = owner;
         loadSketchMap();
     }
 
@@ -33,7 +35,7 @@ public class SketchMap {
         for (int mapID : this.MAPPING.keySet()) {
             RelativeLocation relativelocation = this.MAPPING.get(mapID);
             MapView mapView = Utils.getMapView(mapID);
-            BufferedImage subImage = this.IMAGE.getSubimage(relativelocation.getX() * 128, relativelocation.getY() * 128, 128, 128);
+            BufferedImage subImage = this.image.getSubimage(relativelocation.getX() * 128, relativelocation.getY() * 128, 128, 128);
             for (MapRenderer mapRenderer : mapView.getRenderers()) {
                 mapView.removeRenderer(mapRenderer);
             }
@@ -55,11 +57,19 @@ public class SketchMap {
     }
 
     public String getNamespaceID() {
-        return NAMESPACE_ID;
+        return namespaceID;
+    }
+
+    public void setNamespaceID(String namespaceID) {
+        this.namespaceID = namespaceID;
     }
 
     public BufferedImage getImage() {
-        return IMAGE;
+        return image;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = (image.getWidth() == X_PANES * 128) && (image.getHeight() == Y_PANES * 128) ? image : Utils.resize(image, X_PANES * 128, Y_PANES * 128);
     }
 
     public int getXPanes() {
@@ -72,5 +82,13 @@ public class SketchMap {
 
     public Map<RelativeLocation, MapView> getMapViews() {
         return MAPVIEWS;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

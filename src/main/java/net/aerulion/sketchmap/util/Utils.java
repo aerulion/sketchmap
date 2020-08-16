@@ -2,7 +2,6 @@ package net.aerulion.sketchmap.util;
 
 import net.aerulion.nucleus.api.sound.SoundType;
 import net.aerulion.nucleus.api.sound.SoundUtils;
-import net.aerulion.sketchmap.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -17,6 +16,16 @@ import java.util.List;
 import java.util.Map;
 
 public class Utils {
+
+    private final static String VALID_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyz_/";
+
+    public static boolean isInvalidNamespaceID(String namespaceID) {
+        for (int i = 0; i < namespaceID.length(); i++) {
+            if (!VALID_CHARACTERS.contains(Character.toString(namespaceID.charAt(i))))
+                return true;
+        }
+        return false;
+    }
 
     public static void openSketchMapInventory(Player player, SketchMap sketchMap) {
         List<ItemStack> mapItems = ItemUtils.getOrderedItemSet(sketchMap);

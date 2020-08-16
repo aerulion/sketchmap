@@ -8,9 +8,13 @@ import net.aerulion.nucleus.api.string.StringUtils;
 import net.aerulion.sketchmap.Main;
 import net.aerulion.sketchmap.task.CreateSketchMapTask;
 import net.aerulion.sketchmap.task.DeleteSketchMapTask;
+import net.aerulion.sketchmap.task.ExchangeImageTask;
+import net.aerulion.sketchmap.task.SaveSketchMapTask;
 import net.aerulion.sketchmap.util.Messages;
+import net.aerulion.sketchmap.util.SketchMap;
 import net.aerulion.sketchmap.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -57,7 +61,7 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
                 SoundUtils.playSound(commandSender, SoundType.ERROR);
                 return true;
             }
-            if (!org.apache.commons.lang.StringUtils.isAlphanumeric(args[1].replace("_", ""))) {
+            if (Utils.isInvalidNamespaceID(args[1])) {
                 commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_ALPHANUMERIC.get());
                 SoundUtils.playSound(commandSender, SoundType.ERROR);
                 return true;
@@ -106,6 +110,80 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
                 return true;
             }
             new DeleteSketchMapTask(commandSender, Main.LoadedSketchMaps.get(args[1]));
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("rename")) {
+            if (args.length != 3) {
+                commandSender.sendMessage(Messages.ERROR_WRONG_ARGUMENTS.get());
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            if (!Main.LoadedSketchMaps.containsKey(args[1])) {
+                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_NOT_FOUND.get() + args[1]);
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            if (Utils.isInvalidNamespaceID(args[2])) {
+                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_ALPHANUMERIC.get());
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            if (Main.LoadedSketchMaps.containsKey(args[2])) {
+                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_ALREADY_TAKEN.get());
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            Main.LoadedSketchMaps.put(args[2], Main.LoadedSketchMaps.remove(args[1]));
+            SketchMap sketchMap = Main.LoadedSketchMaps.get(args[2]);
+            sketchMap.setNamespaceID(args[2]);
+            new SaveSketchMapTask(sketchMap, commandSender);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("exchangeimage")) {
+            if (args.length != 3) {
+                commandSender.sendMessage(Messages.ERROR_WRONG_ARGUMENTS.get());
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            if (!Main.LoadedSketchMaps.containsKey(args[1])) {
+                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_NOT_FOUND.get() + args[1]);
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            URL imageURL;
+            try {
+                imageURL = new URL(args[2]);
+            } catch (MalformedURLException ex) {
+                commandSender.sendMessage(Messages.ERROR_MALFORMED_URL.get());
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            new ExchangeImageTask(commandSender, Main.LoadedSketchMaps.get(args[1]), imageURL);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("setowner")) {
+            if (args.length != 3) {
+                commandSender.sendMessage(Messages.ERROR_WRONG_ARGUMENTS.get());
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            if (!Main.LoadedSketchMaps.containsKey(args[1])) {
+                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_NOT_FOUND.get() + args[1]);
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[2]);
+            if (!offlinePlayer.hasPlayedBefore()) {
+                commandSender.sendMessage(Messages.ERROR_OFFLINE_PLAYER_NOT_FOUND.get());
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            SketchMap sketchMap = Main.LoadedSketchMaps.get(args[1]);
+            sketchMap.setOwner(offlinePlayer.getUniqueId().toString());
+            new SaveSketchMapTask(sketchMap, commandSender);
             return true;
         }
 
@@ -168,16 +246,19 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
             ChatUtils.sendChatDividingLine(commandSender, "§e");
             return true;
         }
+
+        commandSender.sendMessage(Messages.ERROR_WRONG_ARGUMENTS.get());
+        SoundUtils.playSound(commandSender, SoundType.ERROR);
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length < 2)
-            return CommandUtils.filterForTabCompleter(new ArrayList<>(Arrays.asList("create", "delete", "get", "help", "give", "rename")), args[0]);
+            return CommandUtils.filterForTabCompleter(new ArrayList<>(Arrays.asList("create", "delete", "get", "help", "give", "rename", "exchangeimage", "setowner")), args[0]);
         if (args[0].equalsIgnoreCase("create")) {
             if (args.length == 2)
-                return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<Name>")), args[1]);
+                return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<NamespaceID>")), args[1]);
             if (args.length == 3)
                 return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<Bild-URL>")), args[2]);
             if (args.length == 4)
@@ -205,7 +286,21 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
             if (args.length == 2)
                 return CommandUtils.filterForTabCompleter(new ArrayList<>(Main.LoadedSketchMaps.keySet()), args[1]);
             if (args.length == 3)
-                return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<NeuerName>")), args[1]);
+                return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<NeuerName>")), args[2]);
+            return Collections.emptyList();
+        }
+        if (args[0].equalsIgnoreCase("exchangeimage")) {
+            if (args.length == 2)
+                return CommandUtils.filterForTabCompleter(new ArrayList<>(Main.LoadedSketchMaps.keySet()), args[1]);
+            if (args.length == 3)
+                return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<Bild-URL>")), args[2]);
+            return Collections.emptyList();
+        }
+        if (args[0].equalsIgnoreCase("setowner")) {
+            if (args.length == 2)
+                return CommandUtils.filterForTabCompleter(new ArrayList<>(Main.LoadedSketchMaps.keySet()), args[1]);
+            if (args.length == 3)
+                return null;
             return Collections.emptyList();
         }
         return Collections.emptyList();
