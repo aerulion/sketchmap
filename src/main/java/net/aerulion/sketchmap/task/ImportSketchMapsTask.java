@@ -53,7 +53,7 @@ public class ImportSketchMapsTask extends BukkitRunnable {
                             sketchMapID = sketchMapID + "_duplicate";
                         int xPanes = fileConfiguration.getInt("XPANES");
                         int yPanes = fileConfiguration.getInt("YPANES");
-                        Main.LoadedSketchMaps.put(sketchMapID, new SketchMap(UUID.randomUUID().toString(), sketchMapID, bufferedImage, xPanes, yPanes, mapping, "CONSOLE"));
+                        Main.LoadedSketchMaps.put(sketchMapID, new SketchMap(UUID.randomUUID().toString(), sketchMapID, bufferedImage, xPanes, yPanes, mapping, "CONSOLE", 0L));
                         new SaveSketchMapTask(Main.LoadedSketchMaps.get(sketchMapID), COMMANDSENDER);
                     } catch (IOException ignored) {
                     }

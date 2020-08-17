@@ -29,7 +29,7 @@ public class Utils {
 
     public static void openSketchMapInventory(Player player, SketchMap sketchMap) {
         List<ItemStack> mapItems = ItemUtils.getOrderedItemSet(sketchMap);
-        final Inventory inventory = Bukkit.createInventory(null, ((int) (Math.ceil(mapItems.size() / 9.0))) * 9, "§8SketchMap: §2§l" + sketchMap.getNamespaceID());
+        final Inventory inventory = Bukkit.createInventory(null, ((int) (Math.ceil(mapItems.size() / 9.0))) * 9, "§8SketchMap:");
         for (ItemStack itemStack : mapItems)
             inventory.addItem(itemStack);
         player.openInventory(inventory);

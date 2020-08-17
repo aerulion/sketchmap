@@ -51,7 +51,7 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
                 SoundUtils.playSound(commandSender, SoundType.ERROR);
                 return true;
             }
-            if (args[1].length() < 3 || args[1].length() > 48) {
+            if (args[1].length() < 3 || args[1].length() > 128) {
                 commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_LENGTH.get());
                 SoundUtils.playSound(commandSender, SoundType.ERROR);
                 return true;
@@ -121,6 +121,11 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
             }
             if (!Main.LoadedSketchMaps.containsKey(args[1])) {
                 commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_NOT_FOUND.get() + args[1]);
+                SoundUtils.playSound(commandSender, SoundType.ERROR);
+                return true;
+            }
+            if (args[2].length() < 3 || args[2].length() > 128) {
+                commandSender.sendMessage(Messages.ERROR_NAMESPACE_ID_LENGTH.get());
                 SoundUtils.playSound(commandSender, SoundType.ERROR);
                 return true;
             }

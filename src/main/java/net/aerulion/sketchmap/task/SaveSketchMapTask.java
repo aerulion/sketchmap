@@ -37,7 +37,7 @@ public class SaveSketchMapTask extends BukkitRunnable {
         if (!isSaving) {
             isSaving = true;
             try (Connection connection = MySQLUtils.getConnection()) {
-                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `aerulion_sketchmap` (`UUID`, `NAMESPACE_ID`, `IMAGE`, `X_PANES`, `Y_PANES`, `MAPPING`, `OWNER`) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE `NAMESPACE_ID` = ?, `IMAGE` = ?, `X_PANES` = ?, `Y_PANES` = ?, `MAPPING` = ?, `OWNER` = ?");
+                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `aerulion_sketchmap` (`UUID`, `NAMESPACE_ID`, `IMAGE`, `X_PANES`, `Y_PANES`, `MAPPING`, `OWNER`, `CREATION_TIMESTAMP`) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE `NAMESPACE_ID` = ?, `IMAGE` = ?, `X_PANES` = ?, `Y_PANES` = ?, `MAPPING` = ?, `OWNER` = ?, `CREATION_TIMESTAMP` = ?");
                 preparedStatement.setString(1, SKETCHMAP.getUUID());
                 preparedStatement.setString(2, SKETCHMAP.getNamespaceID());
                 preparedStatement.setString(3, Base64Utils.encodeBufferedImage(SKETCHMAP.getImage(), "PNG"));
@@ -45,12 +45,14 @@ public class SaveSketchMapTask extends BukkitRunnable {
                 preparedStatement.setInt(5, SKETCHMAP.getYPanes());
                 preparedStatement.setString(6, Utils.encodeMapping(SKETCHMAP.getMapViews()));
                 preparedStatement.setString(7, SKETCHMAP.getOwner());
-                preparedStatement.setString(8, SKETCHMAP.getNamespaceID());
-                preparedStatement.setString(9, Base64Utils.encodeBufferedImage(SKETCHMAP.getImage(), "PNG"));
-                preparedStatement.setInt(10, SKETCHMAP.getXPanes());
-                preparedStatement.setInt(11, SKETCHMAP.getYPanes());
-                preparedStatement.setString(12, Utils.encodeMapping(SKETCHMAP.getMapViews()));
-                preparedStatement.setString(13, SKETCHMAP.getOwner());
+                preparedStatement.setLong(8, SKETCHMAP.getCreationTimestamp());
+                preparedStatement.setString(9, SKETCHMAP.getNamespaceID());
+                preparedStatement.setString(10, Base64Utils.encodeBufferedImage(SKETCHMAP.getImage(), "PNG"));
+                preparedStatement.setInt(11, SKETCHMAP.getXPanes());
+                preparedStatement.setInt(12, SKETCHMAP.getYPanes());
+                preparedStatement.setString(13, Utils.encodeMapping(SKETCHMAP.getMapViews()));
+                preparedStatement.setString(14, SKETCHMAP.getOwner());
+                preparedStatement.setLong(15, SKETCHMAP.getCreationTimestamp());
                 preparedStatement.executeUpdate();
                 preparedStatement.close();
                 COMMANDSENDER.sendMessage(Messages.MESSAGE_SKETCHMAP_SAVED_1.get() + SKETCHMAP.getNamespaceID() + Messages.MESSAGE_SKETCHMAP_SAVED_2.getRaw() + (System.currentTimeMillis() - START_MILLIS) + "ms]");

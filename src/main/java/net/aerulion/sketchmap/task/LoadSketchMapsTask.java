@@ -37,7 +37,7 @@ public class LoadSketchMapsTask extends BukkitRunnable {
             if (resultSet != null) {
                 while (resultSet.next()) {
                     try {
-                        Main.LoadedSketchMaps.put(resultSet.getString("NAMESPACE_ID"), new SketchMap(resultSet.getString("UUID"), resultSet.getString("NAMESPACE_ID"), Base64Utils.decodeBufferedImage(resultSet.getString("IMAGE")), resultSet.getInt("X_PANES"), resultSet.getInt("Y_PANES"), Utils.decodeMapping(resultSet.getString("MAPPING")), resultSet.getString("OWNER")));
+                        Main.LoadedSketchMaps.put(resultSet.getString("NAMESPACE_ID"), new SketchMap(resultSet.getString("UUID"), resultSet.getString("NAMESPACE_ID"), Base64Utils.decodeBufferedImage(resultSet.getString("IMAGE")), resultSet.getInt("X_PANES"), resultSet.getInt("Y_PANES"), Utils.decodeMapping(resultSet.getString("MAPPING")), resultSet.getString("OWNER"), resultSet.getLong("CREATION_TIMESTAMP")));
                     } catch (IOException exception) {
                         ConsoleUtils.sendColoredConsoleMessage(Messages.CONSOLE_ERROR_LOADING_SKETCHMAP.get() + resultSet.getString("NAMESPACE_ID"));
                     }

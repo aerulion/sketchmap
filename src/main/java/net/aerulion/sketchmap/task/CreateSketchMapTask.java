@@ -60,7 +60,7 @@ public class CreateSketchMapTask extends BukkitRunnable {
                 MAPPING.put(Bukkit.createMap(Utils.getDefaultWorld()).getId(), RelativeLocation.fromString(x + ":" + y));
             }
         }
-        Main.LoadedSketchMaps.put(NAMESPACE_ID, new SketchMap(UUID, NAMESPACE_ID, image, X_PANES, Y_PANES, MAPPING, COMMANDSENDER instanceof Player ? ((Player) COMMANDSENDER).getUniqueId().toString() : "CONSOLE"));
+        Main.LoadedSketchMaps.put(NAMESPACE_ID, new SketchMap(UUID, NAMESPACE_ID, image, X_PANES, Y_PANES, MAPPING, COMMANDSENDER instanceof Player ? ((Player) COMMANDSENDER).getUniqueId().toString() : "CONSOLE", System.currentTimeMillis()));
         new SaveSketchMapTask(Main.LoadedSketchMaps.get(NAMESPACE_ID), COMMANDSENDER);
     }
 }

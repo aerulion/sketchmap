@@ -17,8 +17,9 @@ public class SketchMap {
     private final Map<Integer, RelativeLocation> MAPPING;
     private final Map<RelativeLocation, MapView> MAPVIEWS;
     private String owner;
+    private final long CREATION_TIMESTAMP;
 
-    public SketchMap(String UUID, String namespaceID, BufferedImage image, int X_PANES, int Y_PANES, Map<Integer, RelativeLocation> MAPPING, String owner) {
+    public SketchMap(String UUID, String namespaceID, BufferedImage image, int X_PANES, int Y_PANES, Map<Integer, RelativeLocation> MAPPING, String owner, long CREATION_TIMESTAMP) {
         this.UUID = UUID;
         this.namespaceID = namespaceID;
         this.X_PANES = X_PANES;
@@ -27,6 +28,7 @@ public class SketchMap {
         this.MAPPING = MAPPING;
         this.MAPVIEWS = new HashMap<>();
         this.owner = owner;
+        this.CREATION_TIMESTAMP = CREATION_TIMESTAMP;
         loadSketchMap();
     }
 
@@ -90,5 +92,9 @@ public class SketchMap {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public long getCreationTimestamp() {
+        return CREATION_TIMESTAMP;
     }
 }

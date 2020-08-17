@@ -25,7 +25,7 @@ public class ItemUtils {
                         mapMeta.setMapView(sketchMap.getMapViews().get(relativeLocation));
                         mapMeta.setLore(Arrays.asList("§7" + StringUtils.generateLine(11), "§7Pos-X: §a" + (x + 1), "§7Pos-Y: §a" + (y + 1), "§7" + StringUtils.generateLine(11), "§8sketchmap:" + sketchMap.getNamespaceID()));
                         itemStack.setItemMeta(mapMeta);
-                        items.add(NbtUtils.setNBTString(itemStack, "SketchMapUUID", sketchMap.getUUID()));
+                        items.add(NbtUtils.setNBTInt(NbtUtils.setNBTInt(NbtUtils.setNBTString(itemStack, "SketchMapUUID", sketchMap.getUUID()), "SketchMapX", x), "SketchMapY", y));
                     }
                 }
             }
