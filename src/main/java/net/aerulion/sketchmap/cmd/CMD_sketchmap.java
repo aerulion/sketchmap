@@ -266,7 +266,7 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
             return CommandUtils.filterForTabCompleter(new ArrayList<>(Arrays.asList("create", "delete", "get", "help", "give", "rename", "exchangeimage", "setowner")), args[0]);
         if (args[0].equalsIgnoreCase("create")) {
             if (args.length == 2)
-                return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<NamespaceID>")), args[1]);
+                return CommandUtils.filterForTabCompleter(Utils.getNamespaceCategories(), args[1]);
             if (args.length == 3)
                 return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<Bild-URL>")), args[2]);
             if (args.length == 4)
@@ -294,7 +294,7 @@ public class CMD_sketchmap implements CommandExecutor, TabCompleter {
             if (args.length == 2)
                 return CommandUtils.filterForTabCompleter(new ArrayList<>(Main.LoadedSketchMaps.keySet()), args[1]);
             if (args.length == 3)
-                return CommandUtils.filterForTabCompleter(new ArrayList<>(Collections.singletonList("<NeuerName>")), args[2]);
+                return CommandUtils.filterForTabCompleter(Utils.getNamespaceCategories(), args[2]);
             return Collections.emptyList();
         }
         if (args[0].equalsIgnoreCase("exchangeimage")) {

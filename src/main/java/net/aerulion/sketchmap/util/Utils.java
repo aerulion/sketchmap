@@ -2,6 +2,7 @@ package net.aerulion.sketchmap.util;
 
 import net.aerulion.nucleus.api.sound.SoundType;
 import net.aerulion.nucleus.api.sound.SoundUtils;
+import net.aerulion.sketchmap.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import org.bukkit.map.MapView;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,11 +22,30 @@ public class Utils {
     private final static String VALID_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyz_/";
 
     public static boolean isInvalidNamespaceID(String namespaceID) {
+        if (namespaceID.startsWith("/") || namespaceID.startsWith("_") || namespaceID.endsWith("/") || namespaceID.endsWith("_"))
+            return true;
         for (int i = 0; i < namespaceID.length(); i++) {
             if (!VALID_CHARACTERS.contains(Character.toString(namespaceID.charAt(i))))
                 return true;
         }
         return false;
+    }
+
+    public static ArrayList<String> getNamespaceCategories() {
+        ArrayList<String> namespaceCategories = new ArrayList<>();
+        namespaceCategories.add("<NamespaceID>");
+        for (String string : Main.LoadedSketchMaps.keySet()) {
+            String[] splitString = string.split("/");
+            if (splitString.length > 1) {
+                StringBuilder category = new StringBuilder();
+                for (int i = 0; i < splitString.length - 1; i++) {
+                    category.append(splitString[i]).append("/");
+                    if (!namespaceCategories.contains(category.toString()))
+                        namespaceCategories.add(category.toString());
+                }
+            }
+        }
+        return namespaceCategories;
     }
 
     public static void openSketchMapInventory(Player player, SketchMap sketchMap) {

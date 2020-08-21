@@ -44,6 +44,7 @@ public class ExchangeImageTask extends BukkitRunnable {
         }
         SKETCHMAP.unloadSketchMap();
         SKETCHMAP.setImage(image);
+        SKETCHMAP.updateCreationTimestamp();
         SKETCHMAP.loadSketchMap();
         new SaveSketchMapTask(SKETCHMAP, COMMANDSENDER);
     }
