@@ -1,8 +1,8 @@
 name: SketchMap
-version: 2.0
+version: '2.1'
 main: net.aerulion.sketchmap.Main
-api-version: 1.16
-depend: [Nucleus]
+api-version: '1.16'
+depend: [ Nucleus ]
 commands:
   sketchmap:
     description: SketchMap main command.
