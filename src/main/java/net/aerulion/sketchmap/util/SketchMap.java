@@ -1,104 +1,106 @@
 package net.aerulion.sketchmap.util;
 
-import org.bukkit.map.MapRenderer;
-import org.bukkit.map.MapView;
-
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
 
 public class SketchMap {
 
-    private final String UUID;
-    private String namespaceID;
-    private BufferedImage image;
-    private final int X_PANES;
-    private final int Y_PANES;
-    private final Map<Integer, RelativeLocation> MAPPING;
-    private final Map<RelativeLocation, MapView> MAPVIEWS;
-    private String owner;
-    private long creationTimestamp;
+  private final String uuid;
+  private final int xPanes;
+  private final int yPanes;
+  private final Map<Integer, RelativeLocation> mapping;
+  private final Map<RelativeLocation, MapView> mapViews;
+  private String namespaceID;
+  private BufferedImage image;
+  private String owner;
+  private long creationTimestamp;
 
-    public SketchMap(String UUID, String namespaceID, BufferedImage image, int X_PANES, int Y_PANES, Map<Integer, RelativeLocation> MAPPING, String owner, long creationTimestamp) {
-        this.UUID = UUID;
-        this.namespaceID = namespaceID;
-        this.X_PANES = X_PANES;
-        this.Y_PANES = Y_PANES;
-        setImage(image);
-        this.MAPPING = MAPPING;
-        this.MAPVIEWS = new HashMap<>();
-        this.owner = owner;
-        this.creationTimestamp = creationTimestamp;
-        loadSketchMap();
-    }
+  public SketchMap(String uuid, String namespaceID, BufferedImage image, int xPanes, int yPanes,
+      Map<Integer, RelativeLocation> mapping, String owner, long creationTimestamp) {
+    this.uuid = uuid;
+    this.namespaceID = namespaceID;
+    this.xPanes = xPanes;
+    this.yPanes = yPanes;
+    setImage(image);
+    this.mapping = mapping;
+    this.mapViews = new HashMap<>();
+    this.owner = owner;
+    this.creationTimestamp = creationTimestamp;
+    loadSketchMap();
+  }
 
-    public void loadSketchMap() {
-        this.MAPVIEWS.clear();
-        for (int mapID : this.MAPPING.keySet()) {
-            RelativeLocation relativelocation = this.MAPPING.get(mapID);
-            MapView mapView = Utils.getMapView(mapID);
-            BufferedImage subImage = this.image.getSubimage(relativelocation.getX() * 128, relativelocation.getY() * 128, 128, 128);
-            for (MapRenderer mapRenderer : mapView.getRenderers()) {
-                mapView.removeRenderer(mapRenderer);
-            }
-            mapView.addRenderer(new ImageRenderer(subImage));
-            this.MAPVIEWS.put(relativelocation, mapView);
-        }
+  public void loadSketchMap() {
+    this.mapViews.clear();
+    for (int mapID : this.mapping.keySet()) {
+      RelativeLocation relativelocation = this.mapping.get(mapID);
+      MapView mapView = Utils.getMapView(mapID);
+      BufferedImage subImage = this.image.getSubimage(relativelocation.getX() * 128,
+          relativelocation.getY() * 128, 128, 128);
+      for (MapRenderer mapRenderer : mapView.getRenderers()) {
+        mapView.removeRenderer(mapRenderer);
+      }
+      mapView.addRenderer(new ImageRenderer(subImage));
+      this.mapViews.put(relativelocation, mapView);
     }
+  }
 
-    public void unloadSketchMap() {
-        for (MapView mapview : this.MAPVIEWS.values()) {
-            for (MapRenderer maprenderer : mapview.getRenderers()) {
-                mapview.removeRenderer(maprenderer);
-            }
-        }
+  public void unloadSketchMap() {
+    for (MapView mapview : this.mapViews.values()) {
+      for (MapRenderer maprenderer : mapview.getRenderers()) {
+        mapview.removeRenderer(maprenderer);
+      }
     }
+  }
 
-    public String getUUID() {
-        return UUID;
-    }
+  public String getUuid() {
+    return uuid;
+  }
 
-    public String getNamespaceID() {
-        return namespaceID;
-    }
+  public String getNamespaceID() {
+    return namespaceID;
+  }
 
-    public void setNamespaceID(String namespaceID) {
-        this.namespaceID = namespaceID;
-    }
+  public void setNamespaceID(String namespaceID) {
+    this.namespaceID = namespaceID;
+  }
 
-    public BufferedImage getImage() {
-        return image;
-    }
+  public BufferedImage getImage() {
+    return image;
+  }
 
-    public void setImage(BufferedImage image) {
-        this.image = (image.getWidth() == X_PANES * 128) && (image.getHeight() == Y_PANES * 128) ? image : Utils.resize(image, X_PANES * 128, Y_PANES * 128);
-    }
+  public void setImage(BufferedImage image) {
+    this.image = (image.getWidth() == xPanes * 128) && (image.getHeight() == yPanes * 128) ? image
+        : Utils.resize(image, xPanes * 128, yPanes * 128);
+  }
 
-    public int getXPanes() {
-        return X_PANES;
-    }
+  public int getXPanes() {
+    return xPanes;
+  }
 
-    public int getYPanes() {
-        return Y_PANES;
-    }
+  public int getYPanes() {
+    return yPanes;
+  }
 
-    public Map<RelativeLocation, MapView> getMapViews() {
-        return MAPVIEWS;
-    }
+  public Map<RelativeLocation, MapView> getMapViews() {
+    return mapViews;
+  }
 
-    public String getOwner() {
-        return owner;
-    }
+  public String getOwner() {
+    return owner;
+  }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
 
-    public long getCreationTimestamp() {
-        return creationTimestamp;
-    }
+  public long getCreationTimestamp() {
+    return creationTimestamp;
+  }
 
-    public void updateCreationTimestamp() {
-        this.creationTimestamp = System.currentTimeMillis();
-    }
+  public void updateCreationTimestamp() {
+    this.creationTimestamp = System.currentTimeMillis();
+  }
 }
