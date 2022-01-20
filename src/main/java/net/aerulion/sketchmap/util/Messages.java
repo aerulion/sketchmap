@@ -1,5 +1,7 @@
 package net.aerulion.sketchmap.util;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum Messages {
 
   CONSOLE_DISABLING("§eDeaktiviere Plugin..."),
@@ -46,11 +48,11 @@ public enum Messages {
 
   private final String message;
 
-  Messages(String message) {
+  Messages(final String message) {
     this.message = message;
   }
 
-  public String get() {
+  public @NotNull String get() {
     return "§e[§a§lSketchMap§e]§7 " + message;
   }
 

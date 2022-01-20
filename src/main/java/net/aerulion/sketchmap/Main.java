@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
-  public static final Map<String, SketchMap> LoadedSketchMaps = new HashMap<>();
+  public static final Map<String, SketchMap> LOADED_SKETCH_MAPS = new HashMap<>();
   public static Main plugin;
 
   @Override
@@ -23,7 +23,7 @@ public class Main extends JavaPlugin {
   @Override
   public void onEnable() {
     ConsoleUtils.sendColoredConsoleMessage(Messages.CONSOLE_ENABLING.get());
-    Main.plugin = this;
+    plugin = this;
     getCommand("sketchmap").setExecutor(new CMD_sketchmap());
     new LoadSketchMapsTask();
     ConsoleUtils.sendColoredConsoleMessage(Messages.CONSOLE_PLUGIN_ENABLED.get());

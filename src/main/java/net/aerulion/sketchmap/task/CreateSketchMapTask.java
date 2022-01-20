@@ -17,54 +17,55 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateSketchMapTask extends BukkitRunnable {
 
-  private final CommandSender COMMANDSENDER;
-  private final String UUID;
-  private final String NAMESPACE_ID;
-  private final URL IMAGE_URL;
-  private final int X_PANES;
-  private final int Y_PANES;
+  private final CommandSender commandSender;
+  private final String uuid;
+  private final String namespaceId;
+  private final URL imageUrl;
+  private final int xPanes;
+  private final int yPanes;
 
-  public CreateSketchMapTask(CommandSender COMMANDSENDER, String NAMESPACE_ID, URL IMAGE_URL,
-      int X_PANES, int Y_PANES) {
-    this.COMMANDSENDER = COMMANDSENDER;
-    this.UUID = java.util.UUID.randomUUID().toString();
-    this.NAMESPACE_ID = NAMESPACE_ID;
-    this.IMAGE_URL = IMAGE_URL;
-    this.X_PANES = X_PANES;
-    this.Y_PANES = Y_PANES;
+  public CreateSketchMapTask(final CommandSender commandSender, final String namespaceId,
+      final URL imageUrl, final int xPanes, final int yPanes) {
+    this.commandSender = commandSender;
+    this.uuid = java.util.UUID.randomUUID().toString();
+    this.namespaceId = namespaceId;
+    this.imageUrl = imageUrl;
+    this.xPanes = xPanes;
+    this.yPanes = yPanes;
     this.runTaskAsynchronously(Main.plugin);
   }
 
   @Override
   public void run() {
-    BufferedImage image;
+    final BufferedImage image;
     try {
-      final String ext = IMAGE_URL.getFile().substring(IMAGE_URL.getFile().length() - 3);
+      final @NotNull String ext = imageUrl.getFile().substring(imageUrl.getFile().length() - 3);
       if (!(ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("png"))) {
-        COMMANDSENDER.sendMessage(Messages.ERROR_WRONG_IMAGE_FORMAT.get());
-        SoundUtils.playSound(COMMANDSENDER, SoundType.ERROR);
+        commandSender.sendMessage(Messages.ERROR_WRONG_IMAGE_FORMAT.get());
+        SoundUtils.playSound(commandSender, SoundType.ERROR);
         return;
       }
-      image = ImageIO.read(IMAGE_URL);
-    } catch (IOException | StringIndexOutOfBoundsException exception) {
-      COMMANDSENDER.sendMessage(Messages.ERROR_FETCHING_IMAGE.get());
-      SoundUtils.playSound(COMMANDSENDER, SoundType.ERROR);
+      image = ImageIO.read(imageUrl);
+    } catch (final IOException | StringIndexOutOfBoundsException exception) {
+      commandSender.sendMessage(Messages.ERROR_FETCHING_IMAGE.get());
+      SoundUtils.playSound(commandSender, SoundType.ERROR);
       return;
     }
-    Map<Integer, RelativeLocation> MAPPING = new HashMap<>();
-    for (int x = 0; x < X_PANES; ++x) {
-      for (int y = 0; y < Y_PANES; ++y) {
-        MAPPING.put(Bukkit.createMap(Utils.getDefaultWorld()).getId(),
+    final @NotNull Map<Integer, RelativeLocation> mapping = new HashMap<>();
+    for (int x = 0; x < xPanes; ++x) {
+      for (int y = 0; y < yPanes; ++y) {
+        mapping.put(Bukkit.createMap(Utils.getDefaultWorld()).getId(),
             RelativeLocation.fromString(x + ":" + y));
       }
     }
-    Main.LoadedSketchMaps.put(NAMESPACE_ID,
-        new SketchMap(UUID, NAMESPACE_ID, image, X_PANES, Y_PANES, MAPPING,
-            COMMANDSENDER instanceof Player ? ((Player) COMMANDSENDER).getUniqueId().toString()
-                : "CONSOLE", System.currentTimeMillis()));
-    new SaveSketchMapTask(Main.LoadedSketchMaps.get(NAMESPACE_ID), COMMANDSENDER);
+    Main.LOADED_SKETCH_MAPS.put(namespaceId,
+        new SketchMap(uuid, namespaceId, image, xPanes, yPanes, mapping,
+            commandSender instanceof Player player ? player.getUniqueId().toString() : "CONSOLE",
+            System.currentTimeMillis()));
+    new SaveSketchMapTask(Main.LOADED_SKETCH_MAPS.get(namespaceId), commandSender);
   }
 }

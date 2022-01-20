@@ -5,22 +5,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import org.jetbrains.annotations.NotNull;
 
 public class ImageRenderer extends MapRenderer {
 
   private final BufferedImage bufferedImage;
   private boolean imageRendered;
 
-  public ImageRenderer(BufferedImage bufferedImage) {
+  public ImageRenderer(final BufferedImage bufferedImage) {
     this.bufferedImage = bufferedImage;
     this.imageRendered = false;
   }
 
-  public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
+  public void render(final @NotNull MapView map, final @NotNull MapCanvas canvas,
+      final @NotNull Player player) {
     if (this.imageRendered) {
       return;
     }
-    mapCanvas.drawImage(0, 0, this.bufferedImage);
+    canvas.drawImage(0, 0, this.bufferedImage);
     this.imageRendered = true;
   }
 }

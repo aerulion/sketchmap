@@ -3,8 +3,11 @@ package net.aerulion.sketchmap.util;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SketchMap {
 
@@ -12,14 +15,15 @@ public class SketchMap {
   private final int xPanes;
   private final int yPanes;
   private final Map<Integer, RelativeLocation> mapping;
-  private final Map<RelativeLocation, MapView> mapViews;
+  private final @NotNull Map<RelativeLocation, MapView> mapViews;
   private String namespaceID;
   private BufferedImage image;
   private String owner;
   private long creationTimestamp;
 
-  public SketchMap(String uuid, String namespaceID, BufferedImage image, int xPanes, int yPanes,
-      Map<Integer, RelativeLocation> mapping, String owner, long creationTimestamp) {
+  public SketchMap(final String uuid, final String namespaceID, final @NotNull BufferedImage image,
+      final int xPanes, final int yPanes, final Map<Integer, RelativeLocation> mapping,
+      final String owner, final long creationTimestamp) {
     this.uuid = uuid;
     this.namespaceID = namespaceID;
     this.xPanes = xPanes;
@@ -34,12 +38,12 @@ public class SketchMap {
 
   public void loadSketchMap() {
     this.mapViews.clear();
-    for (int mapID : this.mapping.keySet()) {
-      RelativeLocation relativelocation = this.mapping.get(mapID);
-      MapView mapView = Utils.getMapView(mapID);
-      BufferedImage subImage = this.image.getSubimage(relativelocation.getX() * 128,
+    for (final Entry<Integer, RelativeLocation> entry : this.mapping.entrySet()) {
+      final RelativeLocation relativelocation = entry.getValue();
+      final @Nullable MapView mapView = Utils.getMapView(entry.getKey());
+      final BufferedImage subImage = this.image.getSubimage(relativelocation.getX() * 128,
           relativelocation.getY() * 128, 128, 128);
-      for (MapRenderer mapRenderer : mapView.getRenderers()) {
+      for (final MapRenderer mapRenderer : mapView.getRenderers()) {
         mapView.removeRenderer(mapRenderer);
       }
       mapView.addRenderer(new ImageRenderer(subImage));
@@ -48,8 +52,8 @@ public class SketchMap {
   }
 
   public void unloadSketchMap() {
-    for (MapView mapview : this.mapViews.values()) {
-      for (MapRenderer maprenderer : mapview.getRenderers()) {
+    for (final @NotNull MapView mapview : this.mapViews.values()) {
+      for (final MapRenderer maprenderer : mapview.getRenderers()) {
         mapview.removeRenderer(maprenderer);
       }
     }
@@ -63,7 +67,7 @@ public class SketchMap {
     return namespaceID;
   }
 
-  public void setNamespaceID(String namespaceID) {
+  public void setNamespaceID(final String namespaceID) {
     this.namespaceID = namespaceID;
   }
 
@@ -71,7 +75,7 @@ public class SketchMap {
     return image;
   }
 
-  public void setImage(BufferedImage image) {
+  public void setImage(final @NotNull BufferedImage image) {
     this.image = (image.getWidth() == xPanes * 128) && (image.getHeight() == yPanes * 128) ? image
         : Utils.resize(image, xPanes * 128, yPanes * 128);
   }
@@ -84,7 +88,7 @@ public class SketchMap {
     return yPanes;
   }
 
-  public Map<RelativeLocation, MapView> getMapViews() {
+  public @NotNull Map<RelativeLocation, MapView> getMapViews() {
     return mapViews;
   }
 
@@ -92,7 +96,7 @@ public class SketchMap {
     return owner;
   }
 
-  public void setOwner(String owner) {
+  public void setOwner(final String owner) {
     this.owner = owner;
   }
 

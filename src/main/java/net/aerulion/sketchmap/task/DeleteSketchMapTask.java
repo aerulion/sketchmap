@@ -14,33 +14,33 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class DeleteSketchMapTask extends BukkitRunnable {
 
-  private final CommandSender COMMANDSENDER;
-  private final SketchMap SKETCHMAP;
+  private final CommandSender commandSender;
+  private final SketchMap sketchMap;
 
-  public DeleteSketchMapTask(CommandSender COMMANDSENDER, SketchMap SKETCHMAP) {
-    this.COMMANDSENDER = COMMANDSENDER;
-    this.SKETCHMAP = SKETCHMAP;
+  public DeleteSketchMapTask(final CommandSender commandSender, final SketchMap sketchMap) {
+    this.commandSender = commandSender;
+    this.sketchMap = sketchMap;
     this.runTaskAsynchronously(Main.plugin);
   }
 
   @Override
   public void run() {
-    try (Connection connection = MySQLUtils.getConnection()) {
-      PreparedStatement preparedStatement = connection.prepareStatement(
+    try (final Connection connection = MySQLUtils.getConnection()) {
+      final PreparedStatement preparedStatement = connection.prepareStatement(
           "DELETE FROM `aerulion_sketchmap` WHERE `UUID` = ?");
-      preparedStatement.setString(1, SKETCHMAP.getUuid());
-        if (preparedStatement.executeUpdate() < 1) {
-            throw new SQLException();
-        }
-      SKETCHMAP.unloadSketchMap();
-      Main.LoadedSketchMaps.remove(SKETCHMAP.getNamespaceID());
-      COMMANDSENDER.sendMessage(
-          Messages.MESSAGE_SKETCHMAP_DELETED_1.get() + SKETCHMAP.getNamespaceID()
+      preparedStatement.setString(1, sketchMap.getUuid());
+      if (preparedStatement.executeUpdate() < 1) {
+        throw new SQLException();
+      }
+      sketchMap.unloadSketchMap();
+      Main.LOADED_SKETCH_MAPS.remove(sketchMap.getNamespaceID());
+      commandSender.sendMessage(
+          Messages.MESSAGE_SKETCHMAP_DELETED_1.get() + sketchMap.getNamespaceID()
               + Messages.MESSAGE_SKETCHMAP_DELETED_2.getRaw());
-      SoundUtils.playSound(COMMANDSENDER, SoundType.SUCCESS);
-    } catch (SQLException exception) {
-      COMMANDSENDER.sendMessage(Messages.ERROR_DELETING_SKETCHMAP.get());
-      SoundUtils.playSound(COMMANDSENDER, SoundType.ERROR);
+      SoundUtils.playSound(commandSender, SoundType.SUCCESS);
+    } catch (final SQLException exception) {
+      commandSender.sendMessage(Messages.ERROR_DELETING_SKETCHMAP.get());
+      SoundUtils.playSound(commandSender, SoundType.ERROR);
     }
   }
 }

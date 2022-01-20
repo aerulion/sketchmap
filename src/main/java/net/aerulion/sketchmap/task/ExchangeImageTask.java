@@ -11,40 +11,42 @@ import net.aerulion.sketchmap.util.Messages;
 import net.aerulion.sketchmap.util.SketchMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 public class ExchangeImageTask extends BukkitRunnable {
 
-  private final CommandSender COMMANDSENDER;
-  private final SketchMap SKETCHMAP;
-  private final URL IMAGE_URL;
+  private final CommandSender commandSender;
+  private final SketchMap sketchMap;
+  private final URL imageUrl;
 
-  public ExchangeImageTask(CommandSender COMMANDSENDER, SketchMap SKETCHMAP, URL IMAGE_URL) {
-    this.COMMANDSENDER = COMMANDSENDER;
-    this.SKETCHMAP = SKETCHMAP;
-    this.IMAGE_URL = IMAGE_URL;
+  public ExchangeImageTask(final CommandSender commandSender, final SketchMap sketchMap,
+      final URL imageUrl) {
+    this.commandSender = commandSender;
+    this.sketchMap = sketchMap;
+    this.imageUrl = imageUrl;
     this.runTaskAsynchronously(Main.plugin);
   }
 
   @Override
   public void run() {
-    BufferedImage image;
+    final BufferedImage image;
     try {
-      final String ext = IMAGE_URL.getFile().substring(IMAGE_URL.getFile().length() - 3);
+      final @NotNull String ext = imageUrl.getFile().substring(imageUrl.getFile().length() - 3);
       if (!(ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("png"))) {
-        COMMANDSENDER.sendMessage(Messages.ERROR_WRONG_IMAGE_FORMAT.get());
-        SoundUtils.playSound(COMMANDSENDER, SoundType.ERROR);
+        commandSender.sendMessage(Messages.ERROR_WRONG_IMAGE_FORMAT.get());
+        SoundUtils.playSound(commandSender, SoundType.ERROR);
         return;
       }
-      image = ImageIO.read(IMAGE_URL);
-    } catch (IOException | StringIndexOutOfBoundsException exception) {
-      COMMANDSENDER.sendMessage(Messages.ERROR_FETCHING_IMAGE.get());
-      SoundUtils.playSound(COMMANDSENDER, SoundType.ERROR);
+      image = ImageIO.read(imageUrl);
+    } catch (final IOException | StringIndexOutOfBoundsException exception) {
+      commandSender.sendMessage(Messages.ERROR_FETCHING_IMAGE.get());
+      SoundUtils.playSound(commandSender, SoundType.ERROR);
       return;
     }
-    SKETCHMAP.unloadSketchMap();
-    SKETCHMAP.setImage(image);
-    SKETCHMAP.updateCreationTimestamp();
-    SKETCHMAP.loadSketchMap();
-    new SaveSketchMapTask(SKETCHMAP, COMMANDSENDER);
+    sketchMap.unloadSketchMap();
+    sketchMap.setImage(image);
+    sketchMap.updateCreationTimestamp();
+    sketchMap.loadSketchMap();
+    new SaveSketchMapTask(sketchMap, commandSender);
   }
 }
