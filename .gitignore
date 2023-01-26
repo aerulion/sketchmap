@@ -2,3 +2,5 @@
 /.idea/
 /sketchmap.iml
 /dependency-reduced-pom.xml
+build/
+.gradle/

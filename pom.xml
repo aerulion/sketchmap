@@ -6,7 +6,7 @@
 
     <groupId>net.aerulion</groupId>
     <artifactId>sketchmap</artifactId>
-    <version>1.0</version>
+    <version>1.2</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -47,15 +47,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <outputDirectory>C:\Users\Johnno\Desktop\Minecraft Server\DEV-Server\plugins\update
-                    </outputDirectory>
-                </configuration>
-            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -79,7 +70,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.3-R0.1-SNAPSHOT</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
