@@ -59,7 +59,8 @@ public class FileManager {
     final @Nullable String sketchMapID = fileConfiguration.getString("SKETCHMAPID");
     final int xPanes = fileConfiguration.getInt("XPANES");
     final int yPanes = fileConfiguration.getInt("YPANES");
-    final @NotNull BaseFormat baseFormat = BaseFormat.valueOf(fileConfiguration.getString("BASEFORMAT"));
+    final @NotNull BaseFormat baseFormat = BaseFormat.valueOf(
+        fileConfiguration.getString("BASEFORMAT"));
     sketchMapPlugin.getLoadedSketchMaps().put(sketchMapID,
         new SketchMap(bufferedImage, sketchMapID, xPanes, yPanes, baseFormat, mapping));
   }
@@ -100,8 +101,10 @@ public class FileManager {
   public void saveSketchMapToFile(final String sketchMapID) {
     Bukkit.getScheduler().runTaskAsynchronously(sketchMapPlugin, () -> {
       final SketchMap sketchMap = sketchMapPlugin.getLoadedSketchMaps().get(sketchMapID);
-      final @NotNull File file = new File("plugins/SketchMap/SketchMaps", sketchMapID + ".sketchmap");
-      final @NotNull FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
+      final @NotNull File file = new File("plugins/SketchMap/SketchMaps",
+          sketchMapID + ".sketchmap");
+      final @NotNull FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(
+          file);
       try {
         fileConfiguration.set("IMAGE",
             Base64Utils.encodeImage(sketchMap.getImage(), sketchMap.getBaseFormat().name()));
@@ -111,7 +114,7 @@ public class FileManager {
         fileConfiguration.set("BASEFORMAT", sketchMap.getBaseFormat().name());
         final @NotNull List<String> mapping = new ArrayList<>();
         for (final @NotNull RelativeLocation loc : sketchMap.getMapViews().keySet()) {
-          mapping.add(loc.toString() + " " + sketchMap.getMapViews().get(loc).getId());
+          mapping.add(loc + " " + sketchMap.getMapViews().get(loc).getId());
         }
         fileConfiguration.set("MAPPING", mapping);
         fileConfiguration.save(file);
@@ -140,7 +143,8 @@ public class FileManager {
    * @param newname     the new sketchmap id
    */
   public void renameSketchMap(final String sketchMapID, final String newname) {
-    final @NotNull File oldFile = new File("plugins/SketchMap/SketchMaps", sketchMapID + ".sketchmap");
+    final @NotNull File oldFile = new File("plugins/SketchMap/SketchMaps",
+        sketchMapID + ".sketchmap");
     oldFile.delete();
     sketchMapPlugin.getLoadedSketchMaps()
         .put(newname, sketchMapPlugin.getLoadedSketchMaps().remove(sketchMapID));
@@ -157,8 +161,8 @@ public class FileManager {
    * @param xPanes        the x panes
    * @param yPanes        the y panes
    */
-  public void createNewSketchMap(final @NotNull BufferedImage bufferedImage, final String sketchMapID,
-      final int xPanes, final int yPanes) {
+  public void createNewSketchMap(final @NotNull BufferedImage bufferedImage,
+      final String sketchMapID, final int xPanes, final int yPanes) {
     final @NotNull Map<Short, RelativeLocation> mapping = new HashMap<>();
     for (int x = 0; x < xPanes; ++x) {
       for (int y = 0; y < yPanes; ++y) {

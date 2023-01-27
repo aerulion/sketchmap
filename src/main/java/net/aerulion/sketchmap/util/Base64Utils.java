@@ -34,7 +34,8 @@ public final class Base64Utils {
     final int width = bufferedImage.getWidth();
     final int height = bufferedImage.getHeight();
     final int[] pixels = bufferedImage.getRGB(0, 0, width, height, null, 0, width);
-    final @NotNull BufferedImage copy = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    final @NotNull BufferedImage copy = new BufferedImage(width, height,
+        BufferedImage.TYPE_INT_RGB);
     copy.setRGB(0, 0, width, height, pixels, 0, width);
     return copy;
   }
@@ -47,8 +48,8 @@ public final class Base64Utils {
    * @return the encoded string
    * @throws IOException when an unexpected error occurs
    */
-  public static String encodeImage(final @NotNull BufferedImage bufferedImage, final @NotNull String type)
-      throws IOException {
+  public static String encodeImage(final @NotNull BufferedImage bufferedImage,
+      final @NotNull String type) throws IOException {
     final @NotNull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     ImageIO.write(bufferedImage, type, Base64.getEncoder().wrap(byteArrayOutputStream));
     return byteArrayOutputStream.toString(StandardCharsets.ISO_8859_1);
