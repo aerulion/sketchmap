@@ -1,16 +1,21 @@
 package net.aerulion.sketchmap.util;
 
-public class RelativeLocation {
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-  private final int x;
-  private final int y;
+/**
+ * Represents the relative location of a single sketchmap tile.
+ */
+public record RelativeLocation(int x, int y) {
 
-  public RelativeLocation(final int x, final int y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  public static RelativeLocation fromString(final String str) {
+  /**
+   * Deserializes a relative location from the given string.
+   *
+   * @param str the string to deserialize
+   * @return the relative location or null
+   */
+  public static @Nullable RelativeLocation fromString(final @NotNull String str) {
     final String[] args = str.split(":");
     if (args.length != 2) {
       return null;
@@ -27,15 +32,9 @@ public class RelativeLocation {
   }
 
   @Override
-  public String toString() {
+  @Contract(pure = true)
+  public @NotNull String toString() {
     return this.x + ":" + this.y;
   }
 
-  public int getX() {
-    return this.x;
-  }
-
-  public int getY() {
-    return this.y;
-  }
 }

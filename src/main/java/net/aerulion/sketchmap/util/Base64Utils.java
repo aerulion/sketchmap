@@ -7,10 +7,28 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import javax.imageio.ImageIO;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public class Base64Utils {
+/**
+ * A utility class for base 64 related methods.
+ */
+public final class Base64Utils {
 
-  public static BufferedImage decodeImage(final String image) throws IOException {
+  @Contract(pure = true)
+  private Base64Utils() {
+    super();
+    throw new UnsupportedOperationException("This utility class cannot be instantiated!");
+  }
+
+  /**
+   * Decodes the base 64 string to a buffered image.
+   *
+   * @param image the image string to decode
+   * @return the buffered image
+   * @throws IOException when an unexpected error occurs
+   */
+  public static @NotNull BufferedImage decodeImage(final String image) throws IOException {
     final BufferedImage bufferedImage;
     bufferedImage = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(image)));
     final int width = bufferedImage.getWidth();
@@ -21,10 +39,19 @@ public class Base64Utils {
     return copy;
   }
 
+  /**
+   * Encodes the image as a base 64 string.
+   *
+   * @param bufferedImage the image to encode
+   * @param type          the image format
+   * @return the encoded string
+   * @throws IOException when an unexpected error occurs
+   */
   public static String encodeImage(final BufferedImage bufferedImage, final String type)
       throws IOException {
     final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     ImageIO.write(bufferedImage, type, Base64.getEncoder().wrap(byteArrayOutputStream));
-    return byteArrayOutputStream.toString(StandardCharsets.ISO_8859_1.name());
+    return byteArrayOutputStream.toString(StandardCharsets.ISO_8859_1);
   }
+
 }

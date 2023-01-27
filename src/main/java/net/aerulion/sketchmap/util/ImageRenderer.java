@@ -5,22 +5,35 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * A basic map renderer for rendering buffered images.
+ */
 public class ImageRenderer extends MapRenderer {
 
   private final BufferedImage bufferedImage;
   private Boolean imageRendered;
 
+  /**
+   * Instantiates a new image renderer.
+   *
+   * @param bufferedImage the buffered image to render
+   */
   public ImageRenderer(final BufferedImage bufferedImage) {
+    super();
     this.bufferedImage = bufferedImage;
     this.imageRendered = false;
   }
 
-  public void render(final MapView mapView, final MapCanvas mapCanvas, final Player player) {
+  @Override
+  public void render(final @NotNull MapView map, final @NotNull MapCanvas canvas,
+      final @NotNull Player player) {
     if (this.imageRendered) {
       return;
     }
-    mapCanvas.drawImage(0, 0, this.bufferedImage);
+    canvas.drawImage(0, 0, this.bufferedImage);
     this.imageRendered = true;
   }
+
 }
