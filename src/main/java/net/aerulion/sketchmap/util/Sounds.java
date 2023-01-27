@@ -17,7 +17,7 @@ public enum Sounds {
   private final @NotNull Sound sound;
 
   @Contract(pure = true)
-  Sounds(@NotNull final Sound sound) {
+  Sounds(final @NotNull Sound sound) {
     this.sound = sound;
   }
 
