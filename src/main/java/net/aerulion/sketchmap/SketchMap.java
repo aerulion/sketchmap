@@ -104,7 +104,7 @@ public class SketchMap {
    *
    * @return the image
    */
-  public BufferedImage getImage() {
+  public @NotNull BufferedImage getImage() {
     return this.image;
   }
 
@@ -131,7 +131,7 @@ public class SketchMap {
    *
    * @return the map views
    */
-  public Map<RelativeLocation, MapView> getMapViews() {
+  public @NotNull Map<RelativeLocation, MapView> getMapViews() {
     return this.mapviews;
   }
 
