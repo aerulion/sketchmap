@@ -221,9 +221,7 @@ public class SketchMapCommand implements TabExecutor {
         items = new ArrayList<>();
         for (final @NotNull SketchMap sketchmap : sketchMapPlugin.getLoadedSketchMaps().values()) {
           if (sketchmap.getID().contains(args[1].subSequence(1, args[1].length() - 1))) {
-            for (final ItemStack item : ItemUtils.getOrderedItemSet(sketchmap)) {
-              items.add(item);
-            }
+            items.addAll(ItemUtils.getOrderedItemSet(sketchmap));
           }
         }
       } else {
@@ -361,8 +359,8 @@ public class SketchMapCommand implements TabExecutor {
   }
 
   @Override
-  public List<String> onTabComplete(final @NotNull CommandSender sender, final @NotNull Command cmd,
-      final @NotNull String label, final String @NotNull [] args) {
+  public List<String> onTabComplete(final @NotNull CommandSender sender,
+      final @NotNull Command command, final @NotNull String label, final String @NotNull [] args) {
 
     if (args.length < 2) {
       return SketchMapUtils.filterForTabComplete(
