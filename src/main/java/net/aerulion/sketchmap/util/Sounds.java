@@ -27,7 +27,7 @@ public enum Sounds {
    * @return the sound
    */
   @Contract(pure = true)
-  public Sound sound() {
+  public @NotNull Sound sound() {
     return sound;
   }
 

@@ -60,7 +60,7 @@ public class SketchMapCommand implements TabExecutor {
 
   @Override
   public boolean onCommand(final @NotNull CommandSender sender, final @NotNull Command command,
-      final @NotNull String label, final String[] args) {
+      final @NotNull String label, final String @NotNull [] args) {
 
     if (!sender.hasPermission("sketchmap.use")) {
       sender.sendMessage(Messages.ERROR_NO_PERMISSIONS);
@@ -99,7 +99,7 @@ public class SketchMapCommand implements TabExecutor {
         return true;
       }
 
-      final URL url;
+      final @NotNull URL url;
       try {
         url = new URL(args[2]);
       } catch (final MalformedURLException ex) {
@@ -108,11 +108,11 @@ public class SketchMapCommand implements TabExecutor {
         return true;
       }
 
-      Integer xPanes = null;
-      Integer yPanes = null;
+      @Nullable Integer xPanes = null;
+      @Nullable Integer yPanes = null;
 
       if (args.length > 3) {
-        final String[] split = args[3].split(":");
+        final String @NotNull [] split = args[3].split(":");
         if (split.length != 2) {
           sender.sendMessage(Messages.ERROR_WRONG_SCALING_ARGS);
           sender.playSound(Sounds.COMMAND_ERROR.sound());
@@ -142,7 +142,7 @@ public class SketchMapCommand implements TabExecutor {
                 .replacement(String.valueOf(System.currentTimeMillis() - startDownload))));
         final long startProcessing = System.currentTimeMillis();
         sender.sendMessage(Messages.PROCESSING_IMAGE);
-        final String ext = url.getFile().substring(url.getFile().length() - 3);
+        final @NotNull String ext = url.getFile().substring(url.getFile().length() - 3);
         @Nullable BaseFormat format;
         try {
           format = BaseFormat.valueOf(ext.toUpperCase());
@@ -205,7 +205,7 @@ public class SketchMapCommand implements TabExecutor {
     }
 
     if (args[0].equalsIgnoreCase("get")) {
-      if (!(sender instanceof final Player player)) {
+      if (!(sender instanceof final @NotNull Player player)) {
         sender.sendMessage(Messages.ERROR_ONLY_PLAYER);
         sender.playSound(Sounds.COMMAND_ERROR.sound());
         return true;
@@ -216,10 +216,10 @@ public class SketchMapCommand implements TabExecutor {
         sender.playSound(Sounds.COMMAND_ERROR.sound());
         return true;
       }
-      final List<ItemStack> items;
+      final @NotNull List<ItemStack> items;
       if (args[1].startsWith("[") && args[1].endsWith("]")) {
         items = new ArrayList<>();
-        for (final SketchMap sketchmap : sketchMapPlugin.getLoadedSketchMaps().values()) {
+        for (final @NotNull SketchMap sketchmap : sketchMapPlugin.getLoadedSketchMaps().values()) {
           if (sketchmap.getID().contains(args[1].subSequence(1, args[1].length() - 1))) {
             for (final ItemStack item : ItemUtils.getOrderedItemSet(sketchmap)) {
               items.add(item);
@@ -239,7 +239,7 @@ public class SketchMapCommand implements TabExecutor {
       int inventorySize;
       for (inventorySize = items.size() + 1; inventorySize % 9 != 0; ++inventorySize) {
       }
-      final Inventory inv = Bukkit.createInventory(null, inventorySize,
+      final @NotNull Inventory inv = Bukkit.createInventory(null, inventorySize,
           "§8SketchMap ID: §2§l" + args[1]);
       for (final ItemStack iStack : items) {
         inv.addItem(iStack);
@@ -254,7 +254,7 @@ public class SketchMapCommand implements TabExecutor {
         sender.playSound(Sounds.COMMAND_ERROR.sound());
         return true;
       }
-      final Player player = Bukkit.getPlayer(args[1]);
+      final @Nullable Player player = Bukkit.getPlayer(args[1]);
 
       if (player == null) {
         sender.sendMessage(Messages.ERROR_PLAYER_NOT_ONLINE.asComponent()
@@ -270,12 +270,12 @@ public class SketchMapCommand implements TabExecutor {
         sender.playSound(Sounds.COMMAND_ERROR.sound());
         return true;
       }
-      final List<ItemStack> items = ItemUtils.getOrderedItemSet(map);
+      final @NotNull List<ItemStack> items = ItemUtils.getOrderedItemSet(map);
 
       int inventorySize;
       for (inventorySize = items.size() + 1; inventorySize % 9 != 0; ++inventorySize) {
       }
-      final Inventory inv = Bukkit.createInventory(null, inventorySize,
+      final @NotNull Inventory inv = Bukkit.createInventory(null, inventorySize,
           "§8SketchMap ID: §2§l" + args[2]);
       for (final ItemStack iStack : items) {
         inv.addItem(iStack);
@@ -345,8 +345,8 @@ public class SketchMapCommand implements TabExecutor {
         return true;
       }
       sender.sendMessage(Messages.LOADED_SKETCHMAPS);
-      final List<String> maps = new ArrayList<>();
-      for (final SketchMap map : sketchMapPlugin.getLoadedSketchMaps().values()) {
+      final @NotNull List<String> maps = new ArrayList<>();
+      for (final @NotNull SketchMap map : sketchMapPlugin.getLoadedSketchMaps().values()) {
         maps.add(map.getID());
       }
       Collections.sort(maps);
@@ -362,7 +362,7 @@ public class SketchMapCommand implements TabExecutor {
 
   @Override
   public List<String> onTabComplete(final @NotNull CommandSender sender, final @NotNull Command cmd,
-      final @NotNull String label, final String[] args) {
+      final @NotNull String label, final String @NotNull [] args) {
 
     if (args.length < 2) {
       return SketchMapUtils.filterForTabComplete(

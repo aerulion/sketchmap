@@ -32,15 +32,15 @@ public final class ItemUtils {
    * @return the list of item stacks
    */
   public static @NotNull List<ItemStack> getOrderedItemSet(final @NotNull SketchMap sketchMap) {
-    final List<ItemStack> itemStacks = new ArrayList<>();
+    final @NotNull List<ItemStack> itemStacks = new ArrayList<>();
     for (int y = 0; y < sketchMap.getYPanes(); ++y) {
       for (int x = 0; x < sketchMap.getXPanes(); ++x) {
-        for (final RelativeLocation loc : sketchMap.getMapViews().keySet()) {
+        for (final @NotNull RelativeLocation loc : sketchMap.getMapViews().keySet()) {
           if (loc.x() == x) {
             if (loc.y() != y) {
               continue;
             }
-            final ItemStack itemStack = new ItemStack(Material.FILLED_MAP, 1);
+            final @NotNull ItemStack itemStack = new ItemStack(Material.FILLED_MAP, 1);
             final MapMeta mapMeta = (MapMeta) itemStack.getItemMeta();
             mapMeta.setMapView(sketchMap.getMapViews().get(loc));
             mapMeta.lore(List.of(

@@ -19,6 +19,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The file manager for handling file i/o.
@@ -44,21 +45,21 @@ public class FileManager {
    * @param file the file to load the sketchmap from
    * @throws IOException when an unexpected error occurs
    */
-  public void loadSketchMapFromFile(final File file) throws IOException {
-    final FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
-    final BufferedImage bufferedImage = Base64Utils.decodeImage(
+  public void loadSketchMapFromFile(final @NotNull File file) throws IOException {
+    final @NotNull FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
+    final @NotNull BufferedImage bufferedImage = Base64Utils.decodeImage(
         fileConfiguration.getString("IMAGE"));
-    final Map<Short, RelativeLocation> mapping = new HashMap<>();
-    for (final String map : fileConfiguration.getStringList("MAPPING")) {
-      final String[] split = map.split(" ");
-      final RelativeLocation loc = RelativeLocation.fromString(split[0]);
-      final Short id = Short.parseShort(split[1]);
+    final @NotNull Map<Short, RelativeLocation> mapping = new HashMap<>();
+    for (final @NotNull String map : fileConfiguration.getStringList("MAPPING")) {
+      final String @NotNull [] split = map.split(" ");
+      final @Nullable RelativeLocation loc = RelativeLocation.fromString(split[0]);
+      final @NotNull Short id = Short.parseShort(split[1]);
       mapping.put(id, loc);
     }
-    final String sketchMapID = fileConfiguration.getString("SKETCHMAPID");
+    final @Nullable String sketchMapID = fileConfiguration.getString("SKETCHMAPID");
     final int xPanes = fileConfiguration.getInt("XPANES");
     final int yPanes = fileConfiguration.getInt("YPANES");
-    final BaseFormat baseFormat = BaseFormat.valueOf(fileConfiguration.getString("BASEFORMAT"));
+    final @NotNull BaseFormat baseFormat = BaseFormat.valueOf(fileConfiguration.getString("BASEFORMAT"));
     sketchMapPlugin.getLoadedSketchMaps().put(sketchMapID,
         new SketchMap(bufferedImage, sketchMapID, xPanes, yPanes, baseFormat, mapping));
   }
@@ -69,10 +70,10 @@ public class FileManager {
   public void loadAllSketchMaps() {
     final long start = System.currentTimeMillis();
     int count = 0;
-    final File folder = new File("plugins/SketchMap/SketchMaps");
-    final File[] listOfFiles = folder.listFiles();
+    final @NotNull File folder = new File("plugins/SketchMap/SketchMaps");
+    final File @Nullable [] listOfFiles = folder.listFiles();
     if (listOfFiles != null) {
-      for (final File file : listOfFiles) {
+      for (final @NotNull File file : listOfFiles) {
         if (file.isFile()) {
           try {
             loadSketchMapFromFile(file);
@@ -99,8 +100,8 @@ public class FileManager {
   public void saveSketchMapToFile(final String sketchMapID) {
     Bukkit.getScheduler().runTaskAsynchronously(sketchMapPlugin, () -> {
       final SketchMap sketchMap = sketchMapPlugin.getLoadedSketchMaps().get(sketchMapID);
-      final File file = new File("plugins/SketchMap/SketchMaps", sketchMapID + ".sketchmap");
-      final FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
+      final @NotNull File file = new File("plugins/SketchMap/SketchMaps", sketchMapID + ".sketchmap");
+      final @NotNull FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
       try {
         fileConfiguration.set("IMAGE",
             Base64Utils.encodeImage(sketchMap.getImage(), sketchMap.getBaseFormat().name()));
@@ -108,8 +109,8 @@ public class FileManager {
         fileConfiguration.set("XPANES", sketchMap.getXPanes());
         fileConfiguration.set("YPANES", sketchMap.getYPanes());
         fileConfiguration.set("BASEFORMAT", sketchMap.getBaseFormat().name());
-        final List<String> mapping = new ArrayList<>();
-        for (final RelativeLocation loc : sketchMap.getMapViews().keySet()) {
+        final @NotNull List<String> mapping = new ArrayList<>();
+        for (final @NotNull RelativeLocation loc : sketchMap.getMapViews().keySet()) {
           mapping.add(loc.toString() + " " + sketchMap.getMapViews().get(loc).getId());
         }
         fileConfiguration.set("MAPPING", mapping);
@@ -128,7 +129,7 @@ public class FileManager {
     final SketchMap sketchMap = sketchMapPlugin.getLoadedSketchMaps().get(sketchMapID);
     sketchMap.unloadSketchMap();
     sketchMapPlugin.getLoadedSketchMaps().remove(sketchMapID);
-    final File file = new File("plugins/SketchMap/SketchMaps", sketchMapID + ".sketchmap");
+    final @NotNull File file = new File("plugins/SketchMap/SketchMaps", sketchMapID + ".sketchmap");
     file.delete();
   }
 
@@ -139,7 +140,7 @@ public class FileManager {
    * @param newname     the new sketchmap id
    */
   public void renameSketchMap(final String sketchMapID, final String newname) {
-    final File oldFile = new File("plugins/SketchMap/SketchMaps", sketchMapID + ".sketchmap");
+    final @NotNull File oldFile = new File("plugins/SketchMap/SketchMaps", sketchMapID + ".sketchmap");
     oldFile.delete();
     sketchMapPlugin.getLoadedSketchMaps()
         .put(newname, sketchMapPlugin.getLoadedSketchMaps().remove(sketchMapID));
@@ -156,9 +157,9 @@ public class FileManager {
    * @param xPanes        the x panes
    * @param yPanes        the y panes
    */
-  public void createNewSketchMap(final BufferedImage bufferedImage, final String sketchMapID,
+  public void createNewSketchMap(final @NotNull BufferedImage bufferedImage, final String sketchMapID,
       final int xPanes, final int yPanes) {
-    final Map<Short, RelativeLocation> mapping = new HashMap<>();
+    final @NotNull Map<Short, RelativeLocation> mapping = new HashMap<>();
     for (int x = 0; x < xPanes; ++x) {
       for (int y = 0; y < yPanes; ++y) {
         mapping.put((short) Bukkit.createMap(SketchMapUtils.getDefaultWorld()).getId(),

@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.map.MapView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A utility class for sketchmap related methods.
@@ -35,7 +36,7 @@ public final class SketchMapUtils {
     if (scaledImage instanceof BufferedImage) {
       return (BufferedImage) scaledImage;
     }
-    final BufferedImage bufferedImage = new BufferedImage(scaledImage.getWidth(null),
+    final @NotNull BufferedImage bufferedImage = new BufferedImage(scaledImage.getWidth(null),
         scaledImage.getHeight(null), 2);
     final Graphics2D graphics2D = bufferedImage.createGraphics();
     graphics2D.drawImage(scaledImage, 0, 0, null);
@@ -51,7 +52,7 @@ public final class SketchMapUtils {
    */
   @SuppressWarnings("deprecation")
   public static @NotNull MapView getMapView(final int id) {
-    final MapView map = Bukkit.getMap(id);
+    final @Nullable MapView map = Bukkit.getMap(id);
     if (map != null) {
       return map;
     }

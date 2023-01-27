@@ -17,11 +17,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SketchMap {
 
-  private final BufferedImage image;
+  private final @NotNull BufferedImage image;
   private final int xPanes;
   private final int yPanes;
   private final BaseFormat format;
-  private final Map<RelativeLocation, MapView> mapviews;
+  private final @NotNull Map<RelativeLocation, MapView> mapviews;
   private final Map<Short, RelativeLocation> mapping;
   private String mapID;
 
@@ -57,9 +57,9 @@ public class SketchMap {
    */
   public void loadSketchMap() {
     this.mapviews.clear();
-    for (final Entry<Short, RelativeLocation> entry : this.mapping.entrySet()) {
+    for (final @NotNull Entry<Short, RelativeLocation> entry : this.mapping.entrySet()) {
       final RelativeLocation relativelocation = entry.getValue();
-      final MapView mapview = SketchMapUtils.getMapView(entry.getKey());
+      final @NotNull MapView mapview = SketchMapUtils.getMapView(entry.getKey());
       final BufferedImage subImage = this.image.getSubimage(relativelocation.x() * 128,
           relativelocation.y() * 128, 128, 128);
       for (final MapRenderer rend : mapview.getRenderers()) {
@@ -74,7 +74,7 @@ public class SketchMap {
    * Unloads the sketchmap.
    */
   public void unloadSketchMap() {
-    for (final MapView mapview : this.mapviews.values()) {
+    for (final @NotNull MapView mapview : this.mapviews.values()) {
       for (final MapRenderer maprenderer : mapview.getRenderers()) {
         mapview.removeRenderer(maprenderer);
       }

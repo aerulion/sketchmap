@@ -16,7 +16,7 @@ public record RelativeLocation(int x, int y) {
    * @return the relative location or null
    */
   public static @Nullable RelativeLocation fromString(final @NotNull String str) {
-    final String[] args = str.split(":");
+    final String @NotNull [] args = str.split(":");
     if (args.length != 2) {
       return null;
     }

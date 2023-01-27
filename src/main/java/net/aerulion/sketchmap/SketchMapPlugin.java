@@ -59,7 +59,7 @@ public class SketchMapPlugin extends JavaPlugin {
    *
    * @return the sketchmaps
    */
-  public HashMap<String, SketchMap> getLoadedSketchMaps() {
+  public @NotNull HashMap<String, SketchMap> getLoadedSketchMaps() {
     return loadedSketchMaps;
   }
 
