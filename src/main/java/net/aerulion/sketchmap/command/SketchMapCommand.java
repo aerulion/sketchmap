@@ -44,6 +44,20 @@ public class SketchMapCommand implements TabExecutor {
     this.sketchMapPlugin = sketchMapPlugin;
   }
 
+  @Contract("null -> false")
+  private static boolean isAlphanumeric(final @Nullable String str) {
+    if (str == null) {
+      return false;
+    }
+    final int sz = str.length();
+    for (int i = 0; i < sz; i++) {
+      if (!Character.isLetterOrDigit(str.charAt(i))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @Override
   public boolean onCommand(final @NotNull CommandSender sender, final @NotNull Command command,
       final @NotNull String label, final String[] args) {
@@ -191,12 +205,11 @@ public class SketchMapCommand implements TabExecutor {
     }
 
     if (args[0].equalsIgnoreCase("get")) {
-      if (!(sender instanceof Player)) {
+      if (!(sender instanceof final Player player)) {
         sender.sendMessage(Messages.ERROR_ONLY_PLAYER);
         sender.playSound(Sounds.COMMAND_ERROR.sound());
         return true;
       }
-      final Player player = (Player) sender;
 
       if (args.length != 2) {
         sender.sendMessage(Messages.ERROR_WRONG_ARGS);
@@ -412,20 +425,6 @@ public class SketchMapCommand implements TabExecutor {
     }
 
     return List.of();
-  }
-
-  @Contract("null -> false")
-  private static boolean isAlphanumeric(final @Nullable String str) {
-    if (str == null) {
-      return false;
-    }
-    final int sz = str.length();
-    for (int i = 0; i < sz; i++) {
-      if (!Character.isLetterOrDigit(str.charAt(i))) {
-        return false;
-      }
-    }
-    return true;
   }
 
 }
